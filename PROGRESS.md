@@ -333,6 +333,29 @@ Notifications: Crons OpenClaw → Telegram
 
 ---
 
+### Session 11 - 2026-02-14 08:42 UTC 📊 CHARTS VISUALISATION
+**Focus:** Ajouter des graphiques pour visualiser l'évolution des heures et de l'argent
+
+**Accompli:**
+- ✅ Recharts installé (lib React pour charts, compatible Next.js)
+- ✅ Composant StatsCharts créé:
+  - Line chart "Heures travaillées par jour" (données groupées par date)
+  - Line chart "Revenus par jour" (données groupées par date)
+  - Tooltips avec dates formatées en français
+  - Couleurs cohérentes (bleu pour heures, vert pour argent)
+  - Responsive design (grid 2 colonnes sur desktop)
+  - Thème dark (slate) uniforme avec le reste de l'app
+- ✅ Intégration à la page Stats:
+  - Charts affichés en haut, après le header
+  - Données passées depuis StatsView (workLogs + moneyEntries)
+  - Types alignés entre composants
+- ✅ Build successful - page /stats 112 kB (recharts ajouté)
+- ✅ Commit + Push
+
+**Résultat:** Alex peut maintenant voir visuellement l'évolution de son temps et de ses revenus dans le temps! Les graphiques permettent d'identifier rapidement les tendances et les pics de productivité. Interface moderne et pro. 📈
+
+---
+
 ## Notes importantes
 
 - **Nastia = PRIORITAIRE** (vidéos qui gagnent de l'argent)

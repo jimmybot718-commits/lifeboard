@@ -298,6 +298,41 @@ Notifications: Crons OpenClaw → Telegram
 
 ---
 
+### Session 10 - 2026-02-14 08:08 UTC ✅ EDIT/DELETE WORK & MONEY
+**Focus:** Permettre de corriger les erreurs de saisie sur heures et argent
+
+**Problème identifié:**
+- Alex peut logger des heures et de l'argent via Quick Actions
+- Mais si erreur (montant incorrect, heures fausses), aucun moyen de corriger depuis l'UI
+- Seule solution: modifier directement la BDD
+
+**Accompli:**
+- ✅ API Routes créées:
+  - PATCH /api/worklogs/[id] (éditer heures, description, date)
+  - DELETE /api/worklogs/[id] (effacer une entrée)
+  - PATCH /api/money/[id] (éditer montant, description, date)
+  - DELETE /api/money/[id] (effacer une entrée)
+- ✅ Composant StatsView créé (client component):
+  - Édition inline avec boutons Éditer/Sauvegarder/Annuler
+  - Confirmation avant suppression
+  - Formulaire inline avec inputs pour heures/montant/description
+  - State management React pour édition fluide
+- ✅ Page /stats convertie en Server Component + Client StatsView
+- ✅ Schema Prisma amélioré:
+  - Ajout projectId à WorkLog et MoneyEntry (optionnel)
+  - Relations: WorkLog/MoneyEntry → Project
+  - Migration appliquée (db push)
+- ✅ Build successful - 11 routes générées dont 2 nouvelles API
+- ✅ Commit + Push
+
+**Routes ajoutées:**
+- `/api/worklogs/[id]` (PATCH, DELETE)
+- `/api/money/[id]` (PATCH, DELETE)
+
+**Résultat:** Alex peut maintenant corriger ses erreurs de saisie directement depuis la page Stats! Plus besoin d'aller dans la BDD ou de supprimer et recréer. Édition inline rapide et intuitive. 🎯
+
+---
+
 ## Notes importantes
 
 - **Nastia = PRIORITAIRE** (vidéos qui gagnent de l'argent)

@@ -439,6 +439,29 @@ Notifications: Crons OpenClaw → Telegram
 
 ---
 
+### Session 14 - 2026-02-14 10:22 UTC ✅ CLEAN BUILD (No Warnings)
+**Focus:** Fix SelectItem import warning for clean build (ONE thing)
+
+**Problème identifié:**
+- Build warning: `SelectItem is not exported from '@/components/ui/select'`
+- VideoList.tsx importait des composants shadcn complexes (SelectContent, SelectItem, SelectTrigger, SelectValue)
+- Notre select.tsx simplifié n'exportait que le composant `Select` de base
+
+**Solution:**
+- Remplacé le Select shadcn complexe par un `<select>` HTML natif
+- Styling cohérent avec le thème dark (slate)
+- Même fonctionnalité, code plus simple
+
+**Accompli:**
+- ✅ Removed complex Select imports from VideoList.tsx
+- ✅ Replaced with native HTML `<select>` element
+- ✅ Build successful with **ZERO warnings** 🎯
+- ✅ Commit + Push
+
+**Résultat:** Build 100% clean sans warnings! Le projet est encore plus production-ready. Code simplifié et maintenable.
+
+---
+
 ## Notes importantes
 
 - **Nastia = PRIORITAIRE** (vidéos qui gagnent de l'argent)

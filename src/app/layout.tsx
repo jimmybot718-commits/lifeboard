@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { ServiceWorkerRegistration } from "@/components/ServiceWorkerRegistration";
 import { ToastContainer } from "@/components/ui/toast";
+import KeyboardShortcuts from "@/components/KeyboardShortcuts";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -54,6 +55,7 @@ export default function RootLayout({
         {children}
         <ServiceWorkerRegistration />
         <ToastContainer />
+        <KeyboardShortcuts />
       </body>
     </html>
   );

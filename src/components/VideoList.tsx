@@ -6,13 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+// Removed complex Select components - using native HTML select instead
 import { Trash2, ExternalLink, Plus } from 'lucide-react';
 
 interface InstagramVideo {
@@ -199,18 +193,14 @@ export default function VideoList() {
             </div>
             <div>
               <Label>Pour qui</Label>
-              <Select
+              <select
                 value={newVideo.forWhom}
-                onValueChange={(value) => setNewVideo({ ...newVideo, forWhom: value })}
+                onChange={(e) => setNewVideo({ ...newVideo, forWhom: e.target.value })}
+                className="flex h-10 w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
               >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="nastia">Nastia</SelectItem>
-                  <SelectItem value="alex">Alex</SelectItem>
-                </SelectContent>
-              </Select>
+                <option value="nastia">Nastia</option>
+                <option value="alex">Alex</option>
+              </select>
             </div>
             <div className="flex gap-2">
               <Button onClick={addVideo}>Ajouter</Button>

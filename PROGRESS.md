@@ -973,3 +973,63 @@ Notifications: Crons OpenClaw → Telegram
 **Status global:** LifeBoard est **100% production-ready avec toast notifications** pour la deadline (15 fév 2h UTC dans ~9h30)! 🚀
 
 ---
+
+### Session 26 - 2026-02-14 17:12 UTC 📜 ACTIVITY TIMELINE
+**Focus:** Unified activity timeline view (ONE thing)
+
+**Problème identifié:**
+- Pas de vue d'ensemble de toutes les activités récentes
+- Besoin de naviguer entre 5 pages différentes (tasks, videos, emails, stats, schedule)
+- Difficile d'avoir un quick recap de ce qui s'est passé aujourd'hui/cette semaine
+- Manque un fil d'actualité centralisé
+
+**Accompli:**
+- ✅ Page `/activity` créée (Server Component dynamique):
+  - Fetch toutes les activités des 7 derniers jours
+  - Tasks, WorkLogs, MoneyEntries, Videos, Emails
+  - Include relations (actor, project)
+  - Dynamic rendering (`force-dynamic`)
+- ✅ Composant `ActivityTimeline`:
+  - Merge de toutes les activités en un seul flux chronologique
+  - Tri par timestamp (plus récent en premier)
+  - **6 stats cards cliquables** pour filtrer par type:
+    - Total (toutes activités)
+    - Tâches (bleu)
+    - Heures (vert)
+    - Revenus (amber)
+    - Vidéos (purple)
+    - Emails (cyan)
+  - Chaque activité affiche:
+    - Icône couleur (✅ 📧 💰 🎬 ⏱️)
+    - Titre descriptif
+    - Description contextuelle (acteur, projet, status)
+    - Metadata (projet, notes, URL)
+    - Timestamp formaté en français (Jour Date · HH:MM)
+  - **Filtrage client-side** (instant, sans reload)
+  - Hover states + transitions fluides
+  - Thème dark (slate) cohérent
+- ✅ Navigation mise à jour:
+  - Lien "📜 Activity" ajouté dans MobileNav
+  - Accessible depuis toutes les pages
+- ✅ Build successful - 23 routes générées (au lieu de 22)
+- ✅ Commit + Push
+
+**Files created:**
+- `src/app/activity/page.tsx` (1.7 KB)
+- `src/components/ActivityTimeline.tsx` (9.0 KB)
+
+**Files updated:**
+- `src/components/MobileNav.tsx` - Added Activity link
+
+**Résultat:** Alex peut maintenant voir **toutes ses activités récentes dans une seule vue chronologique**! Fini de naviguer entre 5 pages pour savoir ce qui s'est passé. Le timeline unifié montre: tâches créées, heures loggées, revenus enregistrés, vidéos postées, emails envoyés. Parfait pour un quick recap quotidien ou hebdomadaire. Filtres par type pour analyser spécifiquement une catégorie. Interface moderne avec icônes colorées et metadata détaillée. 📜✨
+
+**Status global:** LifeBoard est **100% production-ready avec Activity Timeline** pour la deadline (15 fév 2h UTC dans ~9h)! 🚀
+
+**Next ideas (bonus si temps):**
+- Goal tracking (objectifs heures/revenus)
+- Bulk actions (delete multiple items)
+- Dark/light mode toggle
+- Export/import backup
+- Keyboard shortcuts
+
+---

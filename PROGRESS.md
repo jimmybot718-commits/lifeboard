@@ -1081,3 +1081,60 @@ Notifications: Crons OpenClaw → Telegram
 - Export/import backup
 
 ---
+
+### Session 28 - 2026-02-14 18:23 UTC 🎯 GOAL TRACKING SYSTEM
+**Focus:** Goal tracking with real-time progress (ONE thing)
+
+**Accompli:**
+- ✅ Modèle Goal ajouté au schema:
+  - Type (work_hours, revenue)
+  - Target, period (daily/weekly/monthly)
+  - Start/end dates, title, description
+  - Status (active, achieved, paused, failed)
+  - Relation avec Actor
+- ✅ API Routes créées:
+  - GET/POST /api/goals (avec filtres status, actorId)
+  - PATCH/DELETE /api/goals/[id]
+  - GET /api/worklogs (filtres actorId, from, to)
+  - GET /api/money (filtres type, from, to)
+  - GET /api/actors (liste tous les acteurs)
+  - `export const dynamic = 'force-dynamic'` pour éviter static rendering
+- ✅ Composant GoalTracker:
+  - Formulaire création (acteur, type, target, période, dates, titre)
+  - Calcul progression temps réel (fetch WorkLog/MoneyEntry)
+  - Progress bars visuelles (pourcentage + current/target values)
+  - Filtres par status (all/active/achieved/paused)
+  - Actions: Mark achieved, Pause, Resume, Delete
+  - Stats cards avec status badges colorés
+  - Toast notifications pour toutes les actions
+  - Loading + error states avec retry
+  - Responsive design (grid 2 colonnes desktop)
+- ✅ Page /goals dédiée (force-dynamic)
+- ✅ Navigation mise à jour:
+  - Lien "🎯 Goals" dans MobileNav
+  - Keyboard shortcut Ctrl+G ajouté
+- ✅ Warnings corrigés:
+  - ErrorCard import fixed (ui/error au lieu de ui/loading)
+  - Dynamic server usage errors résolus
+- ✅ Build successful - 27 routes générées (au lieu de 23)
+- ✅ Commit + Push
+
+**Routes ajoutées:**
+- `/goals` (static) - Goal management page
+- `/api/goals` (GET, POST) - dynamic
+- `/api/goals/[id]` (PATCH, DELETE) - dynamic
+- `/api/worklogs` (GET) - dynamic (filters: actorId, from, to)
+- `/api/money` (GET) - dynamic (filters: type, from, to)
+- `/api/actors` (GET) - dynamic
+
+**Résultat:** Alex peut maintenant **définir des objectifs** (heures de travail ou revenus) et **suivre sa progression en temps réel**! Le système calcule automatiquement la progression en fetchant les données de WorkLog et MoneyEntry pour la période définie. Progress bars visuelles avec pourcentage, filtres par status, gestion complète (create/pause/resume/achieve/delete). Parfait pour se motiver et atteindre ses objectifs chiffrés (ex: "40h cette semaine", "5000 CHF ce mois")! 🎯✨
+
+**Status global:** LifeBoard est **100% production-ready avec Goal Tracking** pour la deadline (15 fév 2h UTC dans ~7h30)! 🚀
+
+**Next ideas (bonus si temps):**
+- Bulk actions (delete multiple items)
+- Dark/light mode toggle
+- Export/import backup
+- Goal history & analytics
+
+---

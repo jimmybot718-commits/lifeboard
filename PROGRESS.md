@@ -1192,3 +1192,84 @@ Notifications: Crons OpenClaw → Telegram
 - Bulk actions for other entities (WorkLog, MoneyEntry)
 
 ---
+
+### Session 30 - 2026-02-14 19:34 UTC 📚 HELP/GUIDE PAGE
+**Focus:** Integrated help page with full documentation (ONE thing)
+
+**Problème identifié:**
+- Projet feature-complet mais aucune documentation intégrée
+- Alex pourrait ne pas découvrir tous les features disponibles
+- Pas de référence rapide pour keyboard shortcuts, PWA install, FAQ
+- Besoin d'une aide accessible directement dans l'app
+
+**Accompli:**
+- ✅ Page `/help` créée avec documentation complète:
+  - **Quick Start:** 4 étapes pour démarrer rapidement
+  - **Features Overview:** Description détaillée de chaque feature:
+    - Planning (📅)
+    - Tasks (✅)
+    - Videos Instagram (🎬)
+    - Emails Partenariats (📧)
+    - Stats (📊)
+    - Projects (🔨)
+    - Goals (🎯)
+    - Nastia Dashboard (🎬)
+    - Activity Timeline (📜)
+  - **Keyboard Shortcuts Reference:**
+    - Grille 2 colonnes (Navigation + Plus)
+    - Tous les shortcuts documentés (Ctrl+H, T, V, E, S, P, N, A, C, G, /)
+    - Astuce: Press `?` pour voir la liste
+  - **PWA Installation Guide:**
+    - Instructions iOS (Safari)
+    - Instructions Android (Chrome)
+    - Avantages PWA expliqués
+  - **Tips & Tricks:** 6 conseils pratiques avec icônes:
+    - Quick Actions = gain de temps
+    - Utiliser la recherche
+    - Bulk Delete = nettoyage rapide
+    - Export CSV pour comptabilité
+    - Définir des objectifs
+    - Master des raccourcis clavier
+  - **FAQ:** 6 questions fréquentes avec réponses claires
+  - **Footer:** Version info + deadline mention
+- ✅ Navigation mise à jour:
+  - Lien "📚 Help" ajouté dans MobileNav
+  - Keyboard shortcut `Ctrl + /` pour accéder à Help
+  - Ajouté dans le help modal (liste des shortcuts)
+- ✅ Design cohérent:
+  - Theme dark slate uniforme
+  - Border-left colored pour chaque feature
+  - Icons SVG + emoji pour visual hierarchy
+  - Sections avec backdrop-blur
+  - Responsive (max-width 4xl centered)
+- ✅ Build successful - **28 routes générées** (au lieu de 27)
+- ✅ Commit + Push
+
+**Route ajoutée:**
+- `/help` (static) - Comprehensive help page (906 B + 97 kB first load)
+
+**Résultat:** LifeBoard a maintenant une **documentation complète intégrée**! Alex peut découvrir et maîtriser tous les features directement depuis l'app. Plus besoin de chercher dans le README.md ou de deviner comment utiliser une feature. Guide d'installation PWA, référence keyboard shortcuts, FAQ, tips pratiques... tout est accessible en 1 clic (Ctrl+/ ou menu Help). Interface moderne et bien organisée avec sections colorées et icônes. Parfait pour onboarding et référence quotidienne! 📚✨
+
+**Status global:** LifeBoard est **100% production-ready avec Help page** pour la deadline (15 fév 2h UTC dans ~6h30)! Le projet est maintenant **complet, documenté, et user-friendly** 🚀
+
+**Features finales (30 sessions):**
+✅ Planning éditable
+✅ Tasks management avec bulk delete
+✅ Videos Instagram tracking
+✅ Partnership emails tracking
+✅ Dynamic dashboard avec stats
+✅ Quick Actions (logger heures/argent)
+✅ Stats avec charts, filtres, export CSV
+✅ Projects manager
+✅ Nastia dedicated dashboard
+✅ Loading states & error handling
+✅ Mobile-responsive navigation
+✅ PWA support (installable app)
+✅ Toast notifications système
+✅ Activity timeline (vue unifiée)
+✅ Keyboard shortcuts globaux
+✅ Goal tracking avec progression temps réel
+✅ Bulk actions (delete multiple)
+✅ **Help/Guide page intégrée** 📚
+
+**Total:** 28 routes générées, 0 warnings, build ~2s, production-ready! 🎯

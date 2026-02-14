@@ -17,6 +17,7 @@ model Actor {
   tasks           Task[]
   workLogs        WorkLog[]
   scheduleEntries ScheduleEntry[]
+  goals           Goal[]
 }
 
 // Dynamic tasks - any action
@@ -130,6 +131,23 @@ model PartnershipEmail {
   sentAt      DateTime @default(now())
   repliedAt   DateTime?
   notes       String?  // Follow-up notes
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Goal tracking - objectives and progress
+model Goal {
+  id          String   @id @default(cuid())
+  actorId     String
+  actor       Actor    @relation(fields: [actorId], references: [id])
+  type        String   // "work_hours", "revenue"
+  target      Float    // Target value (hours or CHF)
+  period      String   // "daily", "weekly", "monthly"
+  startDate   DateTime
+  endDate     DateTime
+  status      String   @default("active") // active, achieved, failed, paused
+  title       String   // Custom title (e.g. "Sprint final LifeBoard")
+  description String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

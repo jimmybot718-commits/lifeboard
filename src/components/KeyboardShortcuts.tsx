@@ -95,6 +95,13 @@ export default function KeyboardShortcuts() {
         router.push('/schedule');
         return;
       }
+
+      // g + g - Go goals
+      if (e.key === 'g' && e.ctrlKey) {
+        e.preventDefault();
+        router.push('/goals');
+        return;
+      }
     };
 
     window.addEventListener('keydown', handleKeyPress);
@@ -132,6 +139,7 @@ export default function KeyboardShortcuts() {
             <h3 className="text-lg font-semibold text-white mb-3">Navigation</h3>
             <div className="space-y-2">
               <ShortcutItem shortcut="Ctrl + H" description="Homepage (Dashboard)" />
+              <ShortcutItem shortcut="Ctrl + G" description="Goals" />
               <ShortcutItem shortcut="Ctrl + T" description="Tasks" />
               <ShortcutItem shortcut="Ctrl + V" description="Videos" />
               <ShortcutItem shortcut="Ctrl + E" description="Emails" />

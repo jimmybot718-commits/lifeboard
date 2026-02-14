@@ -17,6 +17,7 @@ export default function MobileNav() {
     { href: '/videos', label: 'Videos' },
     { href: '/emails', label: 'Emails' },
     { href: '/stats', label: 'Stats' },
+    { href: '/help', label: '📚 Help' },
   ]
 
   return (

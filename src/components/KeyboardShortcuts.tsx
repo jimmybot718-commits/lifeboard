@@ -102,6 +102,13 @@ export default function KeyboardShortcuts() {
         router.push('/goals');
         return;
       }
+
+      // Ctrl + / - Go help
+      if (e.key === '/' && e.ctrlKey) {
+        e.preventDefault();
+        router.push('/help');
+        return;
+      }
     };
 
     window.addEventListener('keydown', handleKeyPress);
@@ -148,6 +155,7 @@ export default function KeyboardShortcuts() {
               <ShortcutItem shortcut="Ctrl + N" description="Nastia Dashboard" />
               <ShortcutItem shortcut="Ctrl + A" description="Activity Timeline" />
               <ShortcutItem shortcut="Ctrl + C" description="Schedule (Calendar)" />
+              <ShortcutItem shortcut="Ctrl + /" description="Help" />
             </div>
           </div>
 

@@ -247,6 +247,32 @@ Notifications: Crons OpenClaw → Telegram
 
 **Résultat:** Le dashboard est maintenant 100% fonctionnel avec données dynamiques! Toutes les features requises pour la deadline sont TERMINÉES. Le projet est production-ready! 🎯
 
+### Session 8 - 2026-02-14 07:03 UTC ✨ QUICK ACTIONS
+**Focus:** Quick Actions pour logger heures et argent depuis le dashboard
+
+**Accompli:**
+- ✅ Composant QuickActions créé:
+  - Tabs: Logger Heures / Logger Argent
+  - Formulaire heures: Acteur, Projet, Heures (step 0.5), Description
+  - Formulaire argent: Montant CHF, Description, Projet (optionnel)
+  - Feedback visuel (success/error messages)
+  - Auto-refresh après succès
+- ✅ API route `/api/quick-log`:
+  - POST type=work (crée WorkLog)
+  - POST type=money (crée MoneyEntry)
+  - Validation des champs requis
+- ✅ Intégration au dashboard:
+  - Positionné en haut (après stats cards)
+  - Données actors et activeProjects chargées depuis BDD
+  - UI cohérente avec le thème (slate dark)
+- ✅ Build successful
+- ✅ Commit + Push
+
+**Routes ajoutées:**
+- `/api/quick-log` (POST) - Log work hours or money entries
+
+**Résultat:** Alex peut maintenant logger ses heures de travail et ses revenus directement depuis le dashboard en 2 clics! Plus besoin d'aller dans la BDD ou une page séparée. Quick Actions rend LifeBoard ultra pratique pour le quotidien. 🚀
+
 ---
 
 ## Notes importantes

@@ -1,0 +1,20 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="512" height="512" fill="#0f172a" rx="64"/>
+  
+  <!-- Dashboard icon (grid + chart) -->
+  <!-- Grid squares (top row) -->
+  <rect x="80" y="80" width="120" height="120" fill="#10b981" rx="12"/>
+  <rect x="220" y="80" width="120" height="120" fill="#3b82f6" rx="12"/>
+  <rect x="360" y="80" width="120" height="120" fill="#8b5cf6" rx="12"/>
+  
+  <!-- Chart bars (bottom) -->
+  <rect x="80" y="220" width="80" height="212" fill="#10b981" opacity="0.9" rx="8"/>
+  <rect x="180" y="280" width="80" height="152" fill="#3b82f6" opacity="0.9" rx="8"/>
+  <rect x="280" y="240" width="80" height="192" fill="#8b5cf6" opacity="0.9" rx="8"/>
+  <rect x="380" y="300" width="80" height="132" fill="#f59e0b" opacity="0.9" rx="8"/>
+  
+  <!-- Central circle with checkmark -->
+  <circle cx="256" cy="350" r="60" fill="#ffffff" opacity="0.15"/>
+  <path d="M 230 350 L 245 365 L 282 328" stroke="#ffffff" stroke-width="12" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

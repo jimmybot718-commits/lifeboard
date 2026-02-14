@@ -10,7 +10,7 @@
 
 **Features requises pour demain:**
 1. ✅ Planning de base
-2. [ ] Section "Tasks" - Actions stockées et consultables
+2. ✅ Section "Tasks" - Actions stockées et consultables
 3. [ ] Vidéos Instagram - Stockage avec bouton effacer
 4. [ ] Emails partenariats - Historique, détails
 5. [ ] Dashboard fonctionnel
@@ -39,11 +39,13 @@ Notifications: Crons OpenClaw → Telegram
 
 ## Features prioritaires
 
-### 1. Tasks/Actions (URGENT)
-- [ ] Modèle Task en BDD
-- [ ] Liste des tâches avec status
-- [ ] Actions: marquer fait, effacer, détails
-- [ ] Historique complet
+### 1. Tasks/Actions ✅ TERMINÉ
+- ✅ Modèle Task en BDD
+- ✅ Liste des tâches avec status
+- ✅ Actions: marquer fait, effacer, détails
+- ✅ Historique complet
+- ✅ Filtres (toutes/en cours/terminées)
+- ✅ API routes complètes
 
 ### 2. Vidéos Instagram
 - [ ] Stockage URLs/références
@@ -91,6 +93,29 @@ Notifications: Crons OpenClaw → Telegram
 - Timezone corrigé: Thaïlande UTC+7
 - Crons Nastia ajoutés
 - URGENT: Tasks system requis pour demain
+
+### Session 3 - 2026-02-14 04:11 UTC ✅ TASKS SYSTEM COMPLET
+**Focus:** Tasks/Actions system (API + UI)
+
+**Accompli:**
+- ✅ API Routes créées:
+  - GET /api/tasks (avec filtres status, actorId)
+  - POST /api/tasks (créer une tâche)
+  - PATCH /api/tasks/[id] (update status, result)
+  - DELETE /api/tasks/[id] (effacer)
+- ✅ Composant TaskList:
+  - Filtres: Toutes / En cours / Terminées
+  - États: pending, in_progress, done, failed
+  - Actions: Démarrer, Terminer, Marquer échoué, Effacer
+  - Affichage: Type, acteur, projet, dates, résultat
+- ✅ Page /tasks dédiée
+- ✅ Seed script avec:
+  - 3 Actors (Alex, Nastia, Jimmy)
+  - 3 Projects (LifeBoard, TradePilot, Academy)
+  - 2 Tasks exemple
+- ✅ Database peuplée
+
+**Résultat:** Le système de tasks est FONCTIONNEL. Alex peut voir toutes les actions effectuées, leur status, et les gérer (marquer fait, effacer, etc.)
 
 ---
 

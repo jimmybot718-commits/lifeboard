@@ -117,6 +117,7 @@ export default async function Home() {
             <Link href="/tasks" className="hover:text-blue-400">Tasks</Link>
             <Link href="/videos" className="hover:text-blue-400">Videos</Link>
             <Link href="/emails" className="hover:text-blue-400">Emails</Link>
+            <Link href="/stats" className="hover:text-blue-400">Stats</Link>
           </nav>
         </div>
       </header>

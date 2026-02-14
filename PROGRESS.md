@@ -273,6 +273,29 @@ Notifications: Crons OpenClaw → Telegram
 
 **Résultat:** Alex peut maintenant logger ses heures de travail et ses revenus directement depuis le dashboard en 2 clics! Plus besoin d'aller dans la BDD ou une page séparée. Quick Actions rend LifeBoard ultra pratique pour le quotidien. 🚀
 
+### Session 9 - 2026-02-14 07:36 UTC 📊 STATS PAGE
+**Focus:** Page d'historique et statistiques complètes
+
+**Accompli:**
+- ✅ Page `/stats` créée:
+  - Vue complète historique des 100 dernières entrées (work + money)
+  - Stats agrégées: Total heures, Total argent
+  - Breakdown par acteur (heures)
+  - Breakdown par projet (heures + argent)
+  - Affichage chronologique avec détails complets
+  - Dates formatées en français (jour de la semaine + date complète)
+  - Design cohérent avec le reste de l'app (slate dark)
+- ✅ Navigation mise à jour:
+  - Lien "Stats" ajouté dans le header du dashboard
+  - Accessible depuis toutes les pages
+- ✅ Build successful (route /stats générée)
+- ✅ Commit + Push
+
+**Routes ajoutées:**
+- `/stats` (dynamic) - Historical stats view
+
+**Résultat:** Alex peut maintenant voir l'historique complet de son travail et de ses revenus, avec des statistiques agrégées par acteur et par projet. Parfait pour suivre l'évolution dans le temps! 📊
+
 ---
 
 ## Notes importantes

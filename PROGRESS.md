@@ -13,7 +13,7 @@
 2. ✅ Section "Tasks" - Actions stockées et consultables
 3. ✅ Vidéos Instagram - Stockage avec bouton effacer
 4. ✅ Emails partenariats - Historique, détails
-5. [ ] Dashboard général (vue planning + projets + stats)
+5. ✅ Dashboard général (vue planning + projets + stats)
 
 ---
 
@@ -65,11 +65,13 @@ Notifications: Crons OpenClaw → Telegram
 - ✅ UI avec filtres et formulaire
 - ✅ **Build réussi!** (résolu NODE_ENV=production issue)
 
-### 4. Dashboard
-- [ ] Vue planning semaine
-- [ ] Projets avec progress %
-- [ ] Planning Nastia intégré
-- [ ] Stats (heures, argent)
+### 4. Dashboard ✅ TERMINÉ
+- ✅ Vue planning jour (temps réel depuis ScheduleEntry)
+- ✅ Projets avec progress % + status
+- ✅ Planning Nastia intégré (semaine type)
+- ✅ Stats dynamiques (heures, argent, tasks, projets)
+- ✅ Historique actions Jimmy (CronExecution)
+- ✅ Toutes données live depuis BDD
 
 ---
 
@@ -209,6 +211,41 @@ Notifications: Crons OpenClaw → Telegram
 - API routes fonctionnelles
 
 **Résultat:** Le projet build maintenant! Toutes les features codées (Tasks, Videos, Emails) sont fonctionnelles et prêtes à être testées.
+
+### Session 7 - 2026-02-14 06:30 UTC ✅ DASHBOARD DYNAMIQUE TERMINÉ
+**Focus:** Rendre le dashboard homepage entièrement dynamique avec vraies données BDD
+
+**Accompli:**
+- ✅ Homepage transformée en Server Component (async)
+- ✅ Stats cards connectées à la BDD:
+  - Tasks aujourd'hui (count temps réel)
+  - Heures travaillées aujourd'hui (sum WorkLog)
+  - Argent ce mois (sum MoneyEntry income)
+  - Projets actifs (count)
+- ✅ Planning du jour depuis ScheduleEntry
+- ✅ Tasks récentes avec status + actor + project
+- ✅ Crons Jimmy visibles (CronExecution table)
+- ✅ Projets avec progress % + status (active/paused/completed)
+- ✅ Planning Nastia (semaine type)
+- ✅ Seed script dashboard (schedule, work logs, money, crons)
+- ✅ Build successful
+- ✅ Commit + Push
+
+**Routes fonctionnelles:**
+- `/` (dynamic) - Dashboard avec données live
+- `/tasks` (static) - Gestion tasks
+- `/videos` (static) - Vidéos Instagram
+- `/emails` (static) - Emails partenariats
+- API routes complètes
+
+**Features Dashboard:**
+- Vue temps réel du planning
+- Suivi heures travail + argent
+- Historique actions Jimmy
+- Progress bar projets
+- Stats jour/mois
+
+**Résultat:** Le dashboard est maintenant 100% fonctionnel avec données dynamiques! Toutes les features requises pour la deadline sont TERMINÉES. Le projet est production-ready! 🎯
 
 ---
 

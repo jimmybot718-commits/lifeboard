@@ -42,6 +42,7 @@ const statusColors: Record<EmailStatus, string> = {
 export default function EmailList() {
   const [emails, setEmails] = useState<PartnershipEmail[]>([])
   const [filter, setFilter] = useState<EmailStatus | 'all'>('all')
+  const [searchQuery, setSearchQuery] = useState('')
   const [loading, setLoading] = useState(true)
   
   // Form state
@@ -90,18 +91,54 @@ export default function EmailList() {
     fetchEmails()
   }
 
+  // Client-side filtering by search query
+  const filteredEmails = emails.filter((email) => {
+    if (!searchQuery) return true;
+    const query = searchQuery.toLowerCase();
+    return (
+      email.recipient.toLowerCase().includes(query) ||
+      email.subject.toLowerCase().includes(query) ||
+      email.body.toLowerCase().includes(query) ||
+      email.notes?.toLowerCase().includes(query)
+    );
+  });
+
   const stats = {
-    total: emails.length,
-    sent: emails.filter(e => e.status === 'sent').length,
-    replied: emails.filter(e => e.status === 'replied').length,
-    interested: emails.filter(e => e.status === 'interested').length,
-    rejected: emails.filter(e => e.status === 'rejected').length
+    total: filteredEmails.length,
+    sent: filteredEmails.filter(e => e.status === 'sent').length,
+    replied: filteredEmails.filter(e => e.status === 'replied').length,
+    interested: filteredEmails.filter(e => e.status === 'interested').length,
+    rejected: filteredEmails.filter(e => e.status === 'rejected').length
   }
 
   if (loading) return <div>Chargement...</div>
 
   return (
     <div className="space-y-6">
+      {/* Search bar */}
+      <div className="relative">
+        <input
+          type="text"
+          placeholder="Rechercher par destinataire, sujet, message, notes..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full px-4 py-2 pl-10 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-blue-500"
+        />
+        <svg
+          className="absolute left-3 top-2.5 w-5 h-5 text-slate-400"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+          />
+        </svg>
+      </div>
+
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         <Card>
@@ -215,7 +252,7 @@ export default function EmailList() {
 
       {/* Email List */}
       <div className="space-y-4">
-        {emails.map((email) => (
+        {filteredEmails.map((email) => (
           <Card key={email.id}>
             <CardContent className="pt-6">
               <div className="flex items-start justify-between">
@@ -269,10 +306,10 @@ export default function EmailList() {
             </CardContent>
           </Card>
         ))}
-        {emails.length === 0 && (
+        {filteredEmails.length === 0 && (
           <Card>
             <CardContent className="pt-6 text-center text-gray-500">
-              Aucun email trouvé
+              {searchQuery ? `Aucun email trouvé pour "${searchQuery}"` : 'Aucun email trouvé'}
             </CardContent>
           </Card>
         )}

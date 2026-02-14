@@ -26,6 +26,7 @@ interface InstagramVideo {
 export default function VideoList() {
   const [videos, setVideos] = useState<InstagramVideo[]>([]);
   const [filter, setFilter] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -134,8 +135,44 @@ export default function VideoList() {
   if (loading) return <LoadingCard title="Chargement des vidéos..." />;
   if (error) return <ErrorCard message={error} retry={fetchVideos} />;
 
+  // Client-side filtering by search query
+  const filteredVideos = videos.filter((video) => {
+    if (!searchQuery) return true;
+    const query = searchQuery.toLowerCase();
+    return (
+      video.title?.toLowerCase().includes(query) ||
+      video.description?.toLowerCase().includes(query) ||
+      video.url.toLowerCase().includes(query) ||
+      video.forWhom.toLowerCase().includes(query)
+    );
+  });
+
   return (
     <div className="space-y-4">
+      {/* Search bar */}
+      <div className="relative">
+        <input
+          type="text"
+          placeholder="Rechercher par titre, description, URL..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full px-4 py-2 pl-10 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-blue-500"
+        />
+        <svg
+          className="absolute left-3 top-2.5 w-5 h-5 text-slate-400"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+          />
+        </svg>
+      </div>
+
       {/* Header + Filters */}
       <div className="flex justify-between items-center">
         <div className="flex gap-2">
@@ -222,14 +259,14 @@ export default function VideoList() {
 
       {/* Videos List */}
       <div className="space-y-2">
-        {videos.length === 0 ? (
+        {filteredVideos.length === 0 ? (
           <Card>
             <CardContent className="py-8 text-center text-muted-foreground">
-              Aucune vidéo
+              {searchQuery ? `Aucune vidéo trouvée pour "${searchQuery}"` : 'Aucune vidéo'}
             </CardContent>
           </Card>
         ) : (
-          videos.map((video) => (
+          filteredVideos.map((video) => (
             <Card key={video.id}>
               <CardContent className="py-4">
                 <div className="flex justify-between items-start">

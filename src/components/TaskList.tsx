@@ -27,6 +27,7 @@ export default function TaskList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | 'pending' | 'done'>('all');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const fetchTasks = async () => {
     try {
@@ -108,15 +109,52 @@ export default function TaskList() {
     return <ErrorCard message={error} retry={fetchTasks} />;
   }
 
+  // Client-side filtering by search query
+  const filteredTasks = tasks.filter((task) => {
+    if (!searchQuery) return true;
+    const query = searchQuery.toLowerCase();
+    return (
+      task.title.toLowerCase().includes(query) ||
+      task.description?.toLowerCase().includes(query) ||
+      task.actor.label.toLowerCase().includes(query) ||
+      task.project?.name.toLowerCase().includes(query) ||
+      task.type.toLowerCase().includes(query)
+    );
+  });
+
   return (
     <div className="space-y-4">
-      <div className="flex gap-2 border-b border-gray-200 pb-2">
+      {/* Search bar */}
+      <div className="relative">
+        <input
+          type="text"
+          placeholder="Rechercher par titre, description, acteur, projet..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full px-4 py-2 pl-10 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-blue-500"
+        />
+        <svg
+          className="absolute left-3 top-2.5 w-5 h-5 text-slate-400"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+          />
+        </svg>
+      </div>
+
+      <div className="flex gap-2 border-b border-slate-700 pb-2">
         <button
           onClick={() => setFilter('all')}
           className={`px-4 py-2 rounded-lg font-medium transition-colors ${
             filter === 'all'
-              ? 'bg-gray-900 text-white'
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              ? 'bg-slate-600 text-white'
+              : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
           }`}
         >
           Toutes
@@ -125,8 +163,8 @@ export default function TaskList() {
           onClick={() => setFilter('pending')}
           className={`px-4 py-2 rounded-lg font-medium transition-colors ${
             filter === 'pending'
-              ? 'bg-gray-900 text-white'
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              ? 'bg-slate-600 text-white'
+              : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
           }`}
         >
           En cours
@@ -135,21 +173,21 @@ export default function TaskList() {
           onClick={() => setFilter('done')}
           className={`px-4 py-2 rounded-lg font-medium transition-colors ${
             filter === 'done'
-              ? 'bg-gray-900 text-white'
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              ? 'bg-slate-600 text-white'
+              : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
           }`}
         >
           Terminées
         </button>
       </div>
 
-      {tasks.length === 0 ? (
-        <div className="text-center py-12 text-gray-500">
-          Aucune tâche {filter !== 'all' ? filter : ''}
+      {filteredTasks.length === 0 ? (
+        <div className="text-center py-12 text-slate-400">
+          {searchQuery ? `Aucune tâche trouvée pour "${searchQuery}"` : `Aucune tâche ${filter !== 'all' ? filter : ''}`}
         </div>
       ) : (
         <div className="space-y-3">
-          {tasks.map((task) => (
+          {filteredTasks.map((task) => (
             <div
               key={task.id}
               className={`border rounded-lg p-4 ${getStatusColor(task.status)}`}

@@ -779,3 +779,37 @@ Notifications: Crons OpenClaw → Telegram
 **Status global:** LifeBoard est **production-ready avec analytics avancés** pour la deadline (15 fév 2h UTC dans ~11h45)! 🚀
 
 ---
+
+### Session 22 - 2026-02-14 14:54 UTC 📊 CSV EXPORT
+**Focus:** Add CSV export functionality to Stats page (ONE thing)
+
+**Problème identifié:**
+- Pas de moyen d'exporter les données pour comptabilité externe
+- Difficile de faire des backups des données ou des rapports
+- Impossible d'analyser les données dans Excel/Google Sheets
+
+**Accompli:**
+- ✅ Fonction `handleExportCSV` créée:
+  - Génère un CSV avec 3 sections:
+    1. Work logs (Date, Acteur, Projet, Heures, Notes)
+    2. Money entries (Date, Projet, Montant CHF, Description)
+    3. Summary (Total Heures, Total Revenus)
+  - Utilise les données filtrées par date range
+  - Échappe les virgules dans les notes/descriptions
+  - Nom du fichier avec timestamp: `lifeboard-stats-YYYY-MM-DD.csv`
+  - Téléchargement automatique côté client (blob + link)
+- ✅ Bouton "📊 Export CSV" ajouté:
+  - Positionné à côté du date range filter
+  - Couleur emerald pour visibilité
+  - Responsive (flex-col sur mobile, flex-row sur desktop)
+- ✅ Build successful - 18 routes (Stats page 113 kB)
+- ✅ Commit + Push
+
+**Files updated:**
+- `src/components/StatsView.tsx` (export function + button UI)
+
+**Résultat:** Alex peut maintenant **exporter toutes ses données en CSV** pour comptabilité, backup, ou analyse externe! Le CSV contient toutes les informations (work logs + money) filtrées par la période sélectionnée. Format standard compatible Excel/Google Sheets/LibreOffice. Export en 1 clic. Parfait pour les rapports mensuels, la compta, ou les backups de sécurité. 📊✨
+
+**Status global:** LifeBoard est **production-ready avec export comptable** pour la deadline (15 fév 2h UTC dans ~11h10)! 🚀
+
+---

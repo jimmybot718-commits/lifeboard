@@ -107,3 +107,17 @@ model InstagramVideo {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+// Partnership emails tracking
+model PartnershipEmail {
+  id          String   @id @default(cuid())
+  recipient   String   // Email address or company name
+  subject     String
+  body        String?
+  status      String   @default("sent") // sent, replied, interested, rejected, pending
+  sentAt      DateTime @default(now())
+  repliedAt   DateTime?
+  notes       String?  // Follow-up notes
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

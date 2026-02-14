@@ -12,6 +12,8 @@ export default function TasksPage() {
             <Link href="/" className="hover:text-blue-400">Dashboard</Link>
             <Link href="/planning" className="hover:text-blue-400">Planning</Link>
             <Link href="/tasks" className="text-blue-400">Tasks</Link>
+            <Link href="/videos" className="hover:text-blue-400">Videos</Link>
+            <Link href="/emails" className="hover:text-blue-400">Emails</Link>
             <Link href="/projects" className="hover:text-blue-400">Projects</Link>
             <Link href="/jimmy" className="hover:text-blue-400">Jimmy</Link>
           </nav>

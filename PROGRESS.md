@@ -11,7 +11,7 @@
 **Features requises pour demain:**
 1. ✅ Planning de base
 2. ✅ Section "Tasks" - Actions stockées et consultables
-3. [ ] Vidéos Instagram - Stockage avec bouton effacer
+3. ✅ Vidéos Instagram - Stockage avec bouton effacer
 4. [ ] Emails partenariats - Historique, détails
 5. [ ] Dashboard fonctionnel
 
@@ -47,11 +47,13 @@ Notifications: Crons OpenClaw → Telegram
 - ✅ Filtres (toutes/en cours/terminées)
 - ✅ API routes complètes
 
-### 2. Vidéos Instagram
-- [ ] Stockage URLs/références
-- [ ] Affichage dans dashboard
-- [ ] Bouton effacer
-- [ ] Catégorisation (pour Alex / pour Nastia)
+### 2. Vidéos Instagram ✅ TERMINÉ
+- ✅ Stockage URLs/références
+- ✅ Affichage dans dashboard (/videos)
+- ✅ Bouton effacer
+- ✅ Catégorisation (pour Alex / pour Nastia)
+- ✅ Filtres et stats
+- ✅ Gestion du status (draft/posted)
 
 ### 3. Emails Partenariats
 - [ ] Log des emails envoyés
@@ -116,6 +118,32 @@ Notifications: Crons OpenClaw → Telegram
 - ✅ Database peuplée
 
 **Résultat:** Le système de tasks est FONCTIONNEL. Alex peut voir toutes les actions effectuées, leur status, et les gérer (marquer fait, effacer, etc.)
+
+### Session 4 - 2026-02-14 04:44 UTC ✅ INSTAGRAM VIDEOS SYSTEM COMPLET
+**Focus:** Gestion des vidéos Instagram pour Alex et Nastia
+
+**Accompli:**
+- ✅ Modèle InstagramVideo ajouté au schema:
+  - URL/référence de la vidéo
+  - Titre et description (optionnel)
+  - forWhom (alex/nastia)
+  - Status (draft/posted/deleted)
+  - Date de post
+- ✅ API Routes créées:
+  - GET /api/videos (avec filtres forWhom, status)
+  - POST /api/videos (créer une vidéo)
+  - PATCH /api/videos/[id] (update status, info)
+  - DELETE /api/videos/[id] (effacer complètement)
+- ✅ Composant VideoList:
+  - Filtres: Toutes / Nastia / Alex
+  - Formulaire d'ajout intégré
+  - Actions: Marquer posté, Remettre en draft, Effacer
+  - Affichage: Titre, description, URL (lien cliquable), dates
+  - Stats: Total, Draft, Postées
+- ✅ Page /videos dédiée
+- ✅ Lien ajouté dans la navigation
+
+**Résultat:** Alex peut maintenant stocker et gérer toutes les vidéos Instagram (pour lui ou Nastia), voir leur status, et les organiser facilement. Bouton effacer disponible.
 
 ---
 

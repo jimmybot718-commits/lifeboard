@@ -10,6 +10,7 @@ export default function Home() {
           <nav className="flex gap-4">
             <Link href="/planning" className="hover:text-blue-400">Planning</Link>
             <Link href="/tasks" className="hover:text-blue-400">Tasks</Link>
+            <Link href="/videos" className="hover:text-blue-400">Videos</Link>
             <Link href="/projects" className="hover:text-blue-400">Projects</Link>
             <Link href="/jimmy" className="hover:text-blue-400">Jimmy</Link>
           </nav>

@@ -94,3 +94,16 @@ model ScheduleEntry {
   dayOfWeek   Int?     // 0-6 for recurring weekly
   createdAt   DateTime @default(now())
 }
+
+// Instagram videos - content tracking
+model InstagramVideo {
+  id          String   @id @default(cuid())
+  url         String   // URL or reference to the video
+  title       String?
+  description String?
+  forWhom     String   // "alex", "nastia"
+  status      String   @default("draft") // draft, posted, deleted
+  postedAt    DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

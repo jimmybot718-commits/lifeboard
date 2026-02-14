@@ -115,6 +115,7 @@ export default async function Home() {
           <h1 className="text-2xl font-bold">LifeBoard</h1>
           <nav className="flex gap-4">
             <Link href="/schedule" className="hover:text-blue-400">Planning</Link>
+            <Link href="/projects" className="hover:text-blue-400">Projets</Link>
             <Link href="/tasks" className="hover:text-blue-400">Tasks</Link>
             <Link href="/videos" className="hover:text-blue-400">Videos</Link>
             <Link href="/emails" className="hover:text-blue-400">Emails</Link>

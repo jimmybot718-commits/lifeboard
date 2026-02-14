@@ -1138,3 +1138,57 @@ Notifications: Crons OpenClaw → Telegram
 - Goal history & analytics
 
 ---
+
+### Session 29 - 2026-02-14 18:58 UTC 🗑️ BULK ACTIONS SYSTEM
+**Focus:** Bulk delete functionality for Tasks, Videos, Emails (ONE thing)
+
+**Problème identifié:**
+- Pas de moyen de supprimer plusieurs items d'un coup
+- Tedious de cliquer "Delete" 20 fois pour nettoyer des données
+- Besoin d'une gestion efficace quand beaucoup de données
+
+**Accompli:**
+- ✅ **TaskList** - Bulk actions ajoutées:
+  - Checkboxes sur chaque tâche
+  - "Select all" checkbox dans le header
+  - Bouton "Supprimer (N)" visible quand sélection > 0
+  - Confirmation dialog avant suppression
+  - Loading state (spinner) pendant delete
+  - Toast success avec count ("3 tâches supprimées")
+  - Visual ring (ring-2 ring-blue-500) sur items sélectionnés
+  - Responsive layout (flex-col sur mobile)
+- ✅ **VideoList** - Bulk actions ajoutées:
+  - Même système de checkboxes + select all
+  - Intégré dans la section filtres (Toutes/Nastia/Alex)
+  - Bouton bulk delete avec icône Trash2
+  - Confirmation + loading + toast
+  - Ring visuel sur sélection
+- ✅ **EmailList** - Bulk actions ajoutées:
+  - Checkboxes + select all dans section Filter
+  - Bouton bulk delete cohérent avec le design
+  - Confirmation + loading + toast
+  - Visual feedback sur sélection
+- ✅ Fonctionnalités partagées:
+  - `toggleSelection(id)` - Toggle une checkbox
+  - `toggleSelectAll()` - Toggle toutes les checkboxes
+  - `deleteSelected()` - Delete en parallèle avec Promise.all
+  - State management: selectedIds (Set<string>), isDeleting (boolean)
+- ✅ Build successful - 27 routes, **0 warnings** ✅
+- ✅ Commit + Push
+
+**Files updated:**
+- `src/components/TaskList.tsx` (bulk actions system)
+- `src/components/VideoList.tsx` (bulk actions system)
+- `src/components/EmailList.tsx` (bulk actions system)
+
+**Résultat:** Alex peut maintenant **sélectionner et supprimer plusieurs items en un clic** dans Tasks, Videos, et Emails! Fini de cliquer "Delete" 20 fois pour nettoyer. Sélection visuelle avec ring bleu, compteur en temps réel, confirmation avant suppression, et feedback toast avec le nombre d'items supprimés. Suppression parallèle (Promise.all) pour performances maximales. UX professionnelle et intuitive! 🗑️✨
+
+**Status global:** LifeBoard est **100% production-ready avec Bulk Actions** pour la deadline (15 fév 2h UTC dans ~6h)! 🚀
+
+**Next ideas (bonus si temps):**
+- Dark/light mode toggle
+- Export/import backup
+- Goal history & analytics
+- Bulk actions for other entities (WorkLog, MoneyEntry)
+
+---

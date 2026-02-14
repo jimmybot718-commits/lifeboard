@@ -583,6 +583,49 @@ Notifications: Crons OpenClaw → Telegram
 
 ---
 
+### Session 18 - 2026-02-14 12:38 UTC 🎬 NASTIA DASHBOARD
+**Focus:** Page dédiée Nastia (ONE thing)
+
+**Contexte:**
+- Nastia est PRIORITAIRE (vidéos qui gagnent de l'argent)
+- Besoin d'une vue centralisée pour gérer tout ce qui la concerne
+- Éviter de naviguer entre Schedule/Videos/Stats
+
+**Accompli:**
+- ✅ Page `/nastia` créée (Server Component dynamique)
+- ✅ Stats cards en haut:
+  - Total heures travaillées (30 derniers jours)
+  - Vidéos draft (à poster)
+  - Vidéos postées
+  - Total vidéos
+- ✅ Section Planning de la semaine:
+  - Filtré pour Nastia uniquement
+  - Affichage jour/date/heures/titre/description
+  - Lien vers Planning complet
+- ✅ Section Vidéos Instagram:
+  - Les 5 dernières vidéos avec status
+  - Titre, description, URL cliquable
+  - Badges visuels (Draft/Posté)
+  - Lien vers gestion complète des vidéos
+- ✅ Section Heures récentes:
+  - 10 derniers logs de travail (30j)
+  - Affichage date, projet, notes, heures
+  - Lien vers Stats complètes
+- ✅ Navigation mise à jour:
+  - Lien "🎬 Nastia" ajouté dans le header (couleur purple)
+  - Visible depuis toutes les pages
+- ✅ Build successful - 18 routes générées (au lieu de 17)
+- ✅ Commit + Push avec message descriptif
+
+**Routes ajoutées:**
+- `/nastia` (dynamic) - Nastia dedicated dashboard
+
+**Résultat:** Alex peut maintenant gérer TOUT ce qui concerne Nastia depuis une seule page centralisée! Fini de naviguer entre 3-4 pages différentes. Vue d'ensemble complète: planning de la semaine, vidéos à poster, heures travaillées, stats. Interface cohérente avec le reste de l'app (slate dark). Parfait pour prioriser le contenu de Nastia qui génère des revenus! 🎬✨
+
+**Status global:** LifeBoard est **production-ready avec page Nastia** pour la deadline (demain 2h UTC). Toutes les features demandées + bonus Nastia Dashboard! 🚀
+
+---
+
 ## Notes importantes
 
 - **Nastia = PRIORITAIRE** (vidéos qui gagnent de l'argent)

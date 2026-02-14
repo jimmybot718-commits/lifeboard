@@ -439,6 +439,53 @@ Notifications: Crons OpenClaw → Telegram
 
 ---
 
+### Session 16 - 2026-02-14 11:28 UTC 📅 SCHEDULE EDITOR
+**Focus:** Allow editing the planning from the UI (ONE thing)
+
+**Accompli:**
+- ✅ Schema Prisma mis à jour:
+  - ScheduleEntry: `actorId` + relation vers Actor
+  - ScheduleEntry: `projectId` (optionnel) + relation vers Project
+  - `startTime` / `endTime`: DateTime → String ("HH:MM" format)
+  - Ajout champ `date` (DateTime) pour filtrer par jour
+  - Relations inverses dans Actor et Project
+- ✅ API Routes créées:
+  - GET /api/schedule (avec filtre date optionnel)
+  - POST /api/schedule (créer une entrée)
+  - PATCH /api/schedule/[id] (éditer)
+  - DELETE /api/schedule/[id] (supprimer)
+- ✅ Composant ScheduleEditor:
+  - Formulaire d'ajout (acteur, projet, titre, heures, description)
+  - Édition inline (tous champs sauf acteur)
+  - Suppression avec confirmation
+  - Feedback visuel (success/error messages)
+- ✅ Page /schedule dédiée
+- ✅ Lien "Planning" ajouté dans la navigation
+- ✅ Migration de la BDD (reset + seed)
+- ✅ Seed script corrigé:
+  - ScheduleEntry avec nouveau format
+  - WorkLog: notes au lieu de description
+  - MoneyEntry: source ajouté
+  - CronExecution: result/startedAt au lieu de message/executedAt
+  - Retiré skipDuplicates (incompatible SQLite)
+- ✅ Homepage mise à jour:
+  - getTodaySchedule() utilise le champ `date`
+  - Include actor + project dans la query
+  - Affichage startTime directement (String "HH:MM")
+- ✅ Build successful - 15 routes générées
+- ✅ Commit + Push
+
+**Routes ajoutées:**
+- `/schedule` (dynamic) - Schedule management page
+- `/api/schedule` (GET, POST)
+- `/api/schedule/[id]` (PATCH, DELETE)
+
+**Résultat:** Alex peut maintenant **créer, éditer et supprimer des entrées de planning** directement depuis l'UI! Plus besoin de toucher la BDD. Le planning est entièrement gérable via le dashboard. Formulaire intuitif avec sélection acteur/projet, heures de début/fin, et description. 📅✨
+
+**Status global:** Le projet est maintenant **COMPLET et production-ready** avec toutes les features demandées + Schedule Editor bonus! 🚀
+
+---
+
 ### Session 14 - 2026-02-14 10:22 UTC ✅ CLEAN BUILD (No Warnings)
 **Focus:** Fix SelectItem import warning for clean build (ONE thing)
 

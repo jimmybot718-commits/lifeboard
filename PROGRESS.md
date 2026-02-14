@@ -404,6 +404,41 @@ Notifications: Crons OpenClaw → Telegram
 
 ---
 
+### Session 13 - 2026-02-14 09:50 UTC 🐘 POSTGRESQL MIGRATION
+**Focus:** Migrate schema to PostgreSQL for Vercel deployment (ONE thing)
+
+**Diagnostic:**
+- Schema still using SQLite (`provider = "sqlite"`)
+- Vercel requires PostgreSQL for production
+- Need to migrate before deployment
+
+**Accompli:**
+- ✅ Changed `prisma/schema.prisma`:
+  - `provider = "sqlite"` → `provider = "postgresql"`
+  - Database URL from env var (already configured)
+- ✅ Regenerated Prisma Client with PostgreSQL provider
+- ✅ Commit + Push to GitHub
+- ✅ Created `DEPLOY_NOW.md`:
+  - Step-by-step Vercel deployment guide (5 min)
+  - Vercel Postgres setup instructions
+  - Environment variables configuration
+  - Post-deploy database initialization
+  - Testing checklist
+  - Troubleshooting section
+
+**Files created:**
+- `DEPLOY_NOW.md` (3.7 KB) - Quick deployment guide for Alex
+
+**Files updated:**
+- `prisma/schema.prisma` - PostgreSQL provider
+- Prisma Client regenerated
+
+**Résultat:** Le projet est maintenant **PRÊT POUR VERCEL** avec PostgreSQL! Alex peut déployer en suivant DEPLOY_NOW.md (~5 minutes). Deadline dans ~16h. Le code est push sur GitHub et prêt à être importé dans Vercel. 🐘🚀
+
+**Next step:** Alex déploie via Vercel dashboard (voir DEPLOY_NOW.md)
+
+---
+
 ## Notes importantes
 
 - **Nastia = PRIORITAIRE** (vidéos qui gagnent de l'argent)

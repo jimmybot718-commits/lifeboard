@@ -2,17 +2,27 @@
 
 **Started:** 2026-02-14 03:40 UTC
 **Owner:** Jimmy (AI) + Alex (Human)
-**Status:** 🚧 Building
+**Status:** 🚨 URGENT - Deadline demain matin
 
 ---
 
-## Vision
+## ⚠️ DEADLINE: 15 fév 2026, 9h Thaïlande (2h UTC)
 
-Dashboard personnel pour Alex:
-- Planning quotidien visuel
-- Suivi des projets avec % avancement
-- Planning de sa sœur (prioritaire - vidéos Instagram)
-- Rappels automatiques via Telegram
+**Features requises pour demain:**
+1. ✅ Planning de base
+2. [ ] Section "Tasks" - Actions stockées et consultables
+3. [ ] Vidéos Instagram - Stockage avec bouton effacer
+4. [ ] Emails partenariats - Historique, détails
+5. [ ] Dashboard fonctionnel
+
+---
+
+## Timezone
+
+**Alex est en Thaïlande (UTC+7)**
+- 9h Thaïlande = 2h UTC
+- 15h Thaïlande = 8h UTC
+- 18h Thaïlande = 11h UTC
 
 ---
 
@@ -21,50 +31,72 @@ Dashboard personnel pour Alex:
 ```
 Frontend: Next.js 14 + Tailwind + shadcn/ui
 Backend: Next.js API Routes
-Database: SQLite (Prisma)
+Database: PostgreSQL + Prisma
 Notifications: Crons OpenClaw → Telegram
 ```
 
 ---
 
-## Features
+## Features prioritaires
 
-### Dashboard
-- [ ] Vue calendrier/planning
-- [ ] Projets avec progress bars
-- [ ] Planning sœur intégré
-- [ ] Stats quotidiennes
+### 1. Tasks/Actions (URGENT)
+- [ ] Modèle Task en BDD
+- [ ] Liste des tâches avec status
+- [ ] Actions: marquer fait, effacer, détails
+- [ ] Historique complet
 
-### Planning Alex
-- [ ] Horaires fixes (9h-18h)
-- [ ] Blocs travail/sport/repas
-- [ ] Temps création contenu
+### 2. Vidéos Instagram
+- [ ] Stockage URLs/références
+- [ ] Affichage dans dashboard
+- [ ] Bouton effacer
+- [ ] Catégorisation (pour Alex / pour Nastia)
 
-### Planning Sœur
-- [ ] Calendrier vidéos
-- [ ] Ideas/scripts
-- [ ] Metrics Instagram
+### 3. Emails Partenariats
+- [ ] Log des emails envoyés
+- [ ] Compteur total
+- [ ] Détails (destinataire, sujet, date)
+- [ ] Status (envoyé, répondu, etc.)
 
-### Rappels (Crons)
-- [ ] Morning briefing (9h)
-- [ ] Work start (10h)
-- [ ] Sport reminder (15h)
-- [ ] End of day recap (18h)
+### 4. Dashboard
+- [ ] Vue planning semaine
+- [ ] Projets avec progress %
+- [ ] Planning Nastia intégré
+- [ ] Stats (heures, argent)
+
+---
+
+## Rappels configurés
+
+### Quotidiens (Heure Thaïlande)
+- **09:00:** Morning briefing
+- **15:00:** Rappel sport
+- **18:00:** Recap fin de journée
+
+### Nastia (jours spécifiques)
+- **Lundi 14h:** Filmer?
+- **Mardi 14h:** Filmer? Durée?
+- **Mercredi 9h:** OnlyFans - où aller?
+- **Vendredi 14h:** Debrief durée?
 
 ---
 
 ## Session Log
 
 ### Session 1 - 2026-02-14 03:40 UTC
-- Created repo: github.com/jimmybot718-commits/lifeboard
-- Alex invited as admin
-- Created PLANNING.md structure
-- Next: Setup crons + Next.js
+- Created repo
+- PLANNING.md avec horaires
+- Crons rappels configurés
+
+### Session 2 - 2026-02-14 03:56 UTC
+- Timezone corrigé: Thaïlande UTC+7
+- Crons Nastia ajoutés
+- URGENT: Tasks system requis pour demain
 
 ---
 
-## Notes
+## Notes importantes
 
-- Sœur = PRIORITAIRE (elle fait les vidéos qui gagnent)
-- Instagram niche: "mec qui vit de ses projets"
-- Timezone Alex: Europe/Zurich (UTC+1)
+- **Nastia = PRIORITAIRE** (vidéos qui gagnent de l'argent)
+- **Tout modifiable via conversation** - Je dois pouvoir update la BDD quand Alex dit "j'ai travaillé 2h"
+- **Compteur d'argent** à intégrer
+- **PostgreSQL** (pas SQLite) pour production

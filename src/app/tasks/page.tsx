@@ -1,24 +1,11 @@
 import Link from 'next/link';
 import TaskList from '@/components/TaskList';
+import Header from '@/components/Header';
 
 export default function TasksPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 text-white">
-      {/* Header */}
-      <header className="border-b border-slate-700 p-4">
-        <div className="container mx-auto flex justify-between items-center">
-          <h1 className="text-2xl font-bold">LifeBoard</h1>
-          <nav className="flex gap-4">
-            <Link href="/" className="hover:text-blue-400">Dashboard</Link>
-            <Link href="/planning" className="hover:text-blue-400">Planning</Link>
-            <Link href="/tasks" className="text-blue-400">Tasks</Link>
-            <Link href="/videos" className="hover:text-blue-400">Videos</Link>
-            <Link href="/emails" className="hover:text-blue-400">Emails</Link>
-            <Link href="/projects" className="hover:text-blue-400">Projects</Link>
-            <Link href="/jimmy" className="hover:text-blue-400">Jimmy</Link>
-          </nav>
-        </div>
-      </header>
+      <Header />
 
       <main className="container mx-auto p-6">
         <div className="max-w-4xl mx-auto">

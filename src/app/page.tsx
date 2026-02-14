@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import QuickActions from '@/components/QuickActions'
+import Header from '@/components/Header'
 
 export const dynamic = 'force-dynamic'
 
@@ -109,21 +110,7 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 text-white">
-      {/* Header */}
-      <header className="border-b border-slate-700 p-4">
-        <div className="container mx-auto flex justify-between items-center">
-          <h1 className="text-2xl font-bold">LifeBoard</h1>
-          <nav className="flex gap-4">
-            <Link href="/schedule" className="hover:text-blue-400">Planning</Link>
-            <Link href="/nastia" className="hover:text-purple-400">🎬 Nastia</Link>
-            <Link href="/projects" className="hover:text-blue-400">Projets</Link>
-            <Link href="/tasks" className="hover:text-blue-400">Tasks</Link>
-            <Link href="/videos" className="hover:text-blue-400">Videos</Link>
-            <Link href="/emails" className="hover:text-blue-400">Emails</Link>
-            <Link href="/stats" className="hover:text-blue-400">Stats</Link>
-          </nav>
-        </div>
-      </header>
+      <Header />
 
       <main className="container mx-auto p-6">
         {/* Quick Stats */}

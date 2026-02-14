@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import StatsView from '@/components/StatsView';
+import Header from '@/components/Header';
 
 export const dynamic = 'force-dynamic';
 
@@ -28,9 +29,12 @@ export default async function StatsPage() {
   });
 
   return (
-    <StatsView
-      initialWorkLogs={workLogs}
-      initialMoneyEntries={moneyEntries}
-    />
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800">
+      <Header />
+      <StatsView
+        initialWorkLogs={workLogs}
+        initialMoneyEntries={moneyEntries}
+      />
+    </div>
   );
 }

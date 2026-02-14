@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
+import Header from '@/components/Header';
 
 export const dynamic = 'force-dynamic';
 
@@ -75,7 +76,8 @@ export default async function NastiaPage() {
   const postedVideos = videos.filter(v => v.status === 'posted').length;
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 text-white">
+      <Header />
       <div className="max-w-7xl mx-auto p-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">

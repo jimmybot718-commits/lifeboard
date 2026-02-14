@@ -741,3 +741,41 @@ Notifications: Crons OpenClaw → Telegram
 - **Tout modifiable via conversation** - Je dois pouvoir update la BDD quand Alex dit "j'ai travaillé 2h"
 - **Compteur d'argent** à intégrer
 - **PostgreSQL** (pas SQLite) pour production
+
+### Session 21 - 2026-02-14 14:20 UTC 📅 DATE RANGE FILTER
+**Focus:** Add date range filtering to Stats page (ONE thing)
+
+**Problème identifié:**
+- Stats page montrait les 100 dernières entrées sans filtrage temporel
+- Pas de moyen de voir les stats d'une période précise (dernière semaine, dernier mois)
+- Difficile d'analyser les tendances sur différentes périodes
+
+**Accompli:**
+- ✅ Créé `DateRangeFilter.tsx` (4.9 KB):
+  - Presets rapides: Tout, 7 derniers jours, 30 derniers jours, 90 derniers jours
+  - Mode "Personnalisé" avec date picker (from/to)
+  - Validation des dates (from <= to)
+  - Active preset highlighting (vert pour sélectionné)
+  - Responsive design (flex-wrap)
+  - Thème slate dark cohérent
+- ✅ Intégré dans `StatsView.tsx`:
+  - State `dateRange` pour stocker la période sélectionnée
+  - Helper `filterByDateRange()` pour filtrer workLogs + moneyEntries
+  - Toutes les stats calculées sur données filtrées (totalHours, totalMoney, hoursByActor, moneyByProject)
+  - Charts alimentés avec données filtrées
+  - Listes d'entrées filtrées par période
+  - Message "Aucune entrée pour cette période" quand vide
+- ✅ Build successful - 18 routes (Stats page 113 kB)
+- ✅ Commit + Push
+
+**Files created:**
+- `src/components/DateRangeFilter.tsx` (4.9 KB)
+
+**Files updated:**
+- `src/components/StatsView.tsx` - Added date range filtering logic
+
+**Résultat:** Alex peut maintenant **analyser ses stats sur n'importe quelle période**! Les presets (7j, 30j, 90j) permettent une analyse rapide des tendances récentes. Le mode personnalisé permet de voir n'importe quelle période précise (ex: "combien j'ai gagné en janvier?"). Charts, tableaux, et stats cards s'adaptent dynamiquement à la période sélectionnée. Interface intuitive avec validation. 📅✨
+
+**Status global:** LifeBoard est **production-ready avec analytics avancés** pour la deadline (15 fév 2h UTC dans ~11h45)! 🚀
+
+---

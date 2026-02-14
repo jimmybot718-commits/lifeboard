@@ -3,19 +3,20 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
 // Actors: Alex, Nastia, Jimmy
 model Actor {
-  id        String   @id @default(cuid())
-  name      String   @unique // "alex", "nastia", "jimmy"
-  label     String   // "Alex", "Nastia", "Jimmy"
-  type      String   // "human", "ai"
-  createdAt DateTime @default(now())
-  tasks     Task[]
-  workLogs  WorkLog[]
+  id              String          @id @default(cuid())
+  name            String          @unique // "alex", "nastia", "jimmy"
+  label           String          // "Alex", "Nastia", "Jimmy"
+  type            String          // "human", "ai"
+  createdAt       DateTime        @default(now())
+  tasks           Task[]
+  workLogs        WorkLog[]
+  scheduleEntries ScheduleEntry[]
 }
 
 // Dynamic tasks - any action
@@ -37,17 +38,18 @@ model Task {
 
 // Projects
 model Project {
-  id           String        @id @default(cuid())
-  name         String
-  description  String?
-  progress     Int           @default(0) // 0-100%
-  status       String        @default("active") // active, paused, completed
-  owner        String        // "alex", "nastia", "jimmy"
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  tasks        Task[]
-  workLogs     WorkLog[]
-  moneyEntries MoneyEntry[]
+  id              String          @id @default(cuid())
+  name            String
+  description     String?
+  progress        Int             @default(0) // 0-100%
+  status          String          @default("active") // active, paused, completed
+  owner           String          // "alex", "nastia", "jimmy"
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  tasks           Task[]
+  workLogs        WorkLog[]
+  moneyEntries    MoneyEntry[]
+  scheduleEntries ScheduleEntry[]
 }
 
 // Work logs - hours tracked
@@ -91,11 +93,15 @@ model CronExecution {
 // Schedule entries (for calendar view)
 model ScheduleEntry {
   id          String   @id @default(cuid())
-  actor       String   // "alex", "nastia", "jimmy"
+  actorId     String
+  actor       Actor    @relation(fields: [actorId], references: [id])
+  projectId   String?
+  project     Project? @relation(fields: [projectId], references: [id])
   title       String
   description String?
-  startTime   DateTime
-  endTime     DateTime?
+  date        DateTime // Date of the event (for filtering by day)
+  startTime   String   // Time in "HH:MM" format (e.g. "09:00")
+  endTime     String   // Time in "HH:MM" format (e.g. "17:00")
   recurring   String?  // "daily", "weekly", "monthly", or null
   dayOfWeek   Int?     // 0-6 for recurring weekly
   createdAt   DateTime @default(now())

@@ -72,14 +72,14 @@ async function getProjects() {
 async function getTodaySchedule() {
   const now = new Date()
   const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-  const endOfDay = new Date(startOfDay.getTime() + 24 * 60 * 60 * 1000)
   
   return await prisma.scheduleEntry.findMany({
     where: {
-      startTime: {
-        gte: startOfDay,
-        lt: endOfDay
-      }
+      date: startOfDay
+    },
+    include: {
+      actor: true,
+      project: true
     },
     orderBy: { startTime: 'asc' }
   })
@@ -114,6 +114,7 @@ export default async function Home() {
         <div className="container mx-auto flex justify-between items-center">
           <h1 className="text-2xl font-bold">LifeBoard</h1>
           <nav className="flex gap-4">
+            <Link href="/schedule" className="hover:text-blue-400">Planning</Link>
             <Link href="/tasks" className="hover:text-blue-400">Tasks</Link>
             <Link href="/videos" className="hover:text-blue-400">Videos</Link>
             <Link href="/emails" className="hover:text-blue-400">Emails</Link>
@@ -150,9 +151,9 @@ export default async function Home() {
                 schedule.map(entry => (
                   <PlanningItem 
                     key={entry.id}
-                    time={new Date(entry.startTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                    time={entry.startTime}
                     title={entry.title}
-                    actor={entry.actor}
+                    actor={entry.actor.label}
                   />
                 ))
               )}

@@ -14,6 +14,7 @@ function randomFloat(min: number, max: number, decimals = 1): number {
 function daysAgo(days: number): Date {
   const date = new Date();
   date.setDate(date.getDate() - days);
+  date.setHours(0, 0, 0, 0);
   return date;
 }
 
@@ -156,7 +157,6 @@ async function main() {
         projectId: academy.id,
       },
     ],
-    skipDuplicates: true,
   });
 
   console.log('✅ Sample tasks created');
@@ -187,7 +187,7 @@ async function main() {
           actorId: alex.id,
           projectId: i < 5 ? lifeboard.id : i < 15 ? tradepilot.id : academy.id,
           hours: alexHours,
-          description: workActivities[randomInt(0, workActivities.length - 1)],
+          notes: workActivities[randomInt(0, workActivities.length - 1)],
           date,
         },
       });
@@ -200,7 +200,7 @@ async function main() {
         actorId: jimmy.id,
         projectId: i < 10 ? lifeboard.id : i < 20 ? tradepilot.id : academy.id,
         hours: jimmyHours,
-        description: workActivities[randomInt(0, workActivities.length - 1)],
+        notes: workActivities[randomInt(0, workActivities.length - 1)],
         date,
       },
     });
@@ -209,22 +209,24 @@ async function main() {
   console.log('✅ 30 days of work logs created');
 
   // Generate income entries (every 2-4 days)
-  const incomeDescriptions = [
-    'Academy course sale',
-    'TradePilot subscription revenue',
-    'Consulting work',
-    'Affiliate commission',
-    'Trading profits',
-    'Freelance project payment',
+  const incomeSources = [
+    { source: 'academy', description: 'Academy course sale' },
+    { source: 'tradepilot', description: 'TradePilot subscription revenue' },
+    { source: 'consulting', description: 'Consulting work' },
+    { source: 'affiliate', description: 'Affiliate commission' },
+    { source: 'trading', description: 'Trading profits' },
+    { source: 'freelance', description: 'Freelance project payment' },
   ];
 
   for (let i = 0; i < 30; i += randomInt(2, 4)) {
     const amount = randomInt(50, 500);
+    const sourceData = incomeSources[randomInt(0, incomeSources.length - 1)];
     await prisma.moneyEntry.create({
       data: {
         amount,
         type: 'income',
-        description: incomeDescriptions[randomInt(0, incomeDescriptions.length - 1)],
+        source: sourceData.source,
+        description: sourceData.description,
         projectId: Math.random() > 0.5 ? tradepilot.id : academy.id,
         date: daysAgo(i),
       },
@@ -267,7 +269,6 @@ async function main() {
         status: 'draft',
       },
     ],
-    skipDuplicates: true,
   });
 
   console.log('✅ Instagram videos created');
@@ -277,27 +278,26 @@ async function main() {
     data: [
       {
         recipient: 'john@techstartup.com',
-        subject: 'Partnership Opportunity - TradePilot',
-        body: 'Hi John, I wanted to reach out about a potential partnership...',
+        subject: 'Collaboration Opportunity - TradePilot',
+        body: 'Hi John, I saw your work on financial tools and thought we might collaborate...',
         status: 'replied',
-        notes: 'Interested in affiliate partnership',
-        repliedAt: daysAgo(2),
-      },
-      {
-        recipient: 'sarah@marketingagency.com',
-        subject: 'Collaboration on Academy Promotion',
-        body: 'Hi Sarah, I love your content marketing work...',
-        status: 'interested',
-        notes: 'Wants to discuss commission structure',
         repliedAt: daysAgo(5),
+        notes: 'Positive response, follow up next week',
       },
       {
-        recipient: 'mike@investor.vc',
-        subject: 'Investment Opportunity - AIAuto',
-        body: 'Hi Mike, We are building a B2B prospection SaaS...',
-        status: 'rejected',
-        notes: 'Not investing in B2B SaaS right now',
+        recipient: 'sarah@growthagency.com',
+        subject: 'Partnership Proposal',
+        body: 'Hi Sarah, Your agency could benefit from our AI automation tools...',
+        status: 'interested',
         repliedAt: daysAgo(10),
+        notes: 'Wants to schedule a demo call',
+      },
+      {
+        recipient: 'mike@startup.io',
+        subject: 'Integration Opportunity',
+        body: 'Hi Mike, I believe our platforms could integrate seamlessly...',
+        status: 'rejected',
+        repliedAt: daysAgo(15),
       },
       {
         recipient: 'lisa@influencer.com',
@@ -312,7 +312,6 @@ async function main() {
         status: 'pending',
       },
     ],
-    skipDuplicates: true,
   });
 
   console.log('✅ Partnership emails created');
@@ -325,35 +324,38 @@ async function main() {
     data: [
       {
         actorId: alex.id,
-        startTime: new Date(today.getTime() + 9 * 60 * 60 * 1000), // 9:00
-        endTime: new Date(today.getTime() + 10 * 60 * 60 * 1000), // 10:00
+        date: today,
+        startTime: '09:00',
+        endTime: '10:00',
         title: 'Morning Review',
         description: 'Check emails, plan the day',
       },
       {
         actorId: alex.id,
-        startTime: new Date(today.getTime() + 10 * 60 * 60 * 1000), // 10:00
-        endTime: new Date(today.getTime() + 13 * 60 * 60 * 1000), // 13:00
+        date: today,
+        startTime: '10:00',
+        endTime: '13:00',
         title: 'Deep Work - LifeBoard',
         description: 'Final touches before deployment',
         projectId: lifeboard.id,
       },
       {
         actorId: alex.id,
-        startTime: new Date(today.getTime() + 15 * 60 * 60 * 1000), // 15:00
-        endTime: new Date(today.getTime() + 16 * 60 * 60 * 1000), // 16:00
+        date: today,
+        startTime: '15:00',
+        endTime: '16:00',
         title: 'Sport',
         description: 'Gym session',
       },
       {
         actorId: nastia.id,
-        startTime: new Date(today.getTime() + 14 * 60 * 60 * 1000), // 14:00
-        endTime: new Date(today.getTime() + 16 * 60 * 60 * 1000), // 16:00
+        date: today,
+        startTime: '14:00',
+        endTime: '16:00',
         title: 'Video Shooting',
         description: 'Film 3 Instagram reels',
       },
     ],
-    skipDuplicates: true,
   });
 
   console.log('✅ Schedule entries created');
@@ -363,31 +365,40 @@ async function main() {
     data: [
       {
         cronName: 'lifeboard-dev',
-        message: 'Built dashboard with dynamic stats',
-        executedAt: daysAgo(2),
+        result: 'Built dashboard with dynamic stats',
+        startedAt: daysAgo(2),
+        endedAt: daysAgo(2),
+        status: 'success',
       },
       {
         cronName: 'tradepilot-dev',
-        message: 'Improved auto-trading algorithm',
-        executedAt: daysAgo(1),
+        result: 'Improved auto-trading algorithm',
+        startedAt: daysAgo(1),
+        endedAt: daysAgo(1),
+        status: 'success',
       },
       {
         cronName: 'backup',
-        message: 'Backup completed successfully',
-        executedAt: new Date(),
+        result: 'Backup completed successfully',
+        startedAt: new Date(),
+        endedAt: new Date(),
+        status: 'success',
       },
       {
         cronName: 'lifeboard-dev',
-        message: 'Added charts to stats page',
-        executedAt: daysAgo(1),
+        result: 'Added charts to stats page',
+        startedAt: daysAgo(1),
+        endedAt: daysAgo(1),
+        status: 'success',
       },
       {
         cronName: 'tradepilot-debrief',
-        message: 'Sent progress update to Telegram',
-        executedAt: daysAgo(1),
+        result: 'Sent progress update to Telegram',
+        startedAt: daysAgo(1),
+        endedAt: daysAgo(1),
+        status: 'success',
       },
     ],
-    skipDuplicates: true,
   });
 
   console.log('✅ Cron executions created');

@@ -1030,6 +1030,54 @@ Notifications: Crons OpenClaw → Telegram
 - Bulk actions (delete multiple items)
 - Dark/light mode toggle
 - Export/import backup
-- Keyboard shortcuts
+
+---
+
+### Session 27 - 2026-02-14 17:45 UTC ⌨️ KEYBOARD SHORTCUTS
+**Focus:** Global keyboard shortcuts system for power users (ONE thing)
+
+**Accompli:**
+- ✅ Créé `KeyboardShortcuts.tsx` (5.8 KB):
+  - Modal help activé par `?` key
+  - Shortcuts globaux navigation:
+    - `Ctrl + H` → Homepage (Dashboard)
+    - `Ctrl + T` → Tasks
+    - `Ctrl + V` → Videos
+    - `Ctrl + E` → Emails
+    - `Ctrl + S` → Stats
+    - `Ctrl + P` → Projects
+    - `Ctrl + N` → Nastia Dashboard
+    - `Ctrl + A` → Activity Timeline
+    - `Ctrl + C` → Schedule (Calendar)
+  - `Esc` pour fermer les modals
+  - Ignore shortcuts quand typing dans forms (input/textarea/select)
+  - Compatible Mac (Cmd) et Windows/Linux (Ctrl)
+  - Modal help avec:
+    - Section Navigation (tous les shortcuts)
+    - Section General (? et Esc)
+    - Pro Tips avec instructions
+    - UI moderne: backdrop blur, dark theme, kbd tags stylés
+- ✅ Intégré dans `layout.tsx`:
+  - Composant global après ToastContainer
+  - Actif sur toutes les pages
+  - Pas d'impact SSR (client component)
+- ✅ Build successful - 23 routes générées (clean)
+- ✅ Commit + Push
+
+**Files created:**
+- `src/components/KeyboardShortcuts.tsx` (5.8 KB)
+
+**Files updated:**
+- `src/app/layout.tsx` - KeyboardShortcuts integration
+
+**Résultat:** Alex peut maintenant **naviguer ultra-rapidement** dans LifeBoard sans toucher la souris! Shortcuts globaux pour toutes les pages principales. Help accessible en 1 touche (`?`). UX power-user professionnelle. Parfait pour gagner du temps en workflow quotidien. Les shortcuts sont visibles et apprenables via le modal help. Compatible Mac et PC. 🔥⌨️
+
+**Status global:** LifeBoard est **100% production-ready avec keyboard shortcuts** pour la deadline (15 fév 2h UTC dans ~8h15)! 🚀
+
+**Next ideas (bonus si temps):**
+- Goal tracking (objectifs heures/revenus)
+- Bulk actions (delete multiple items)
+- Dark/light mode toggle
+- Export/import backup
 
 ---

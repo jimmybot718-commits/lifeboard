@@ -37,15 +37,17 @@ model Task {
 
 // Projects
 model Project {
-  id          String   @id @default(cuid())
-  name        String
-  description String?
-  progress    Int      @default(0) // 0-100%
-  status      String   @default("active") // active, paused, completed
-  owner       String   // "alex", "nastia", "jimmy"
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  tasks       Task[]
+  id           String        @id @default(cuid())
+  name         String
+  description  String?
+  progress     Int           @default(0) // 0-100%
+  status       String        @default("active") // active, paused, completed
+  owner        String        // "alex", "nastia", "jimmy"
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  tasks        Task[]
+  workLogs     WorkLog[]
+  moneyEntries MoneyEntry[]
 }
 
 // Work logs - hours tracked
@@ -53,6 +55,8 @@ model WorkLog {
   id        String   @id @default(cuid())
   actorId   String
   actor     Actor    @relation(fields: [actorId], references: [id])
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id])
   date      DateTime
   hours     Float
   notes     String?
@@ -67,6 +71,8 @@ model MoneyEntry {
   type        String   // "income", "expense"
   source      String   // "instagram", "onlyfans", "tradepilot", etc.
   description String?
+  projectId   String?
+  project     Project? @relation(fields: [projectId], references: [id])
   date        DateTime @default(now())
   createdAt   DateTime @default(now())
 }

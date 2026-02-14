@@ -854,3 +854,74 @@ Notifications: Crons OpenClaw → Telegram
 **Status global:** LifeBoard est **production-ready avec search avancé** pour la deadline (15 fév 2h UTC dans ~10h30)! 🚀
 
 ---
+
+### Session 24 - 2026-02-14 16:03 UTC 📱 PWA SUPPORT
+**Focus:** Add Progressive Web App support for native mobile installation (ONE thing)
+
+**Problème identifié:**
+- Dashboard utilisé quotidiennement sur mobile mais nécessite ouvrir le navigateur à chaque fois
+- Pas d'icône sur écran d'accueil
+- Pas de mode standalone (fullscreen sans barre d'URL)
+- Aucun support offline
+
+**Accompli:**
+- ✅ Créé `manifest.json`:
+  - Metadata app (nom, description, couleurs)
+  - Icônes 192x192 et 512x512 (maskable)
+  - Display mode standalone (fullscreen sans browser UI)
+  - Theme color slate dark (#0f172a)
+  - Shortcuts vers Tasks, Stats, Nastia
+  - Categories: productivity, business
+- ✅ Service Worker (`sw.js`):
+  - Network-first strategy (données toujours fresh)
+  - Cache fallback pour mode offline
+  - Cache static assets (/tasks, /videos, /stats, etc.)
+  - Skip API calls (toujours fresh)
+  - Auto-cleanup old caches
+- ✅ Icônes app générées:
+  - Created icon.svg (dashboard design avec grid + chart)
+  - Converted to PNG: icon-192.png (13KB) + icon-512.png (17KB)
+  - Couleurs coordonnées (emerald, blue, purple, amber)
+  - Checkmark central pour "productivity"
+- ✅ Layout.tsx mis à jour:
+  - PWA meta tags (apple-web-app-capable, theme-color)
+  - Viewport optimisé (no user scaling)
+  - Link vers manifest.json
+  - Apple touch icon
+- ✅ ServiceWorkerRegistration component:
+  - Auto-register SW on mount
+  - Check for updates hourly
+  - Client-only component (no SSR)
+- ✅ Build successful - 22 routes générées
+- ✅ Commit + Push
+
+**Files created:**
+- `public/manifest.json` (1.3 KB)
+- `public/sw.js` (2.0 KB)
+- `public/icon.svg` (940 bytes)
+- `public/icon-192.png` (13 KB)
+- `public/icon-512.png` (17 KB)
+- `src/components/ServiceWorkerRegistration.tsx` (667 bytes)
+
+**Files updated:**
+- `src/app/layout.tsx` - PWA metadata + viewport + SW registration
+
+**PWA Features:**
+- ✅ Installable sur iOS/Android/Desktop
+- ✅ Icône personnalisée sur écran d'accueil
+- ✅ Mode standalone (pas de barre navigateur)
+- ✅ Offline support (cache fallback)
+- ✅ Fast loading (cached assets)
+- ✅ App shortcuts (Quick Add Task, Stats, Nastia)
+
+**Résultat:** Alex peut maintenant **installer LifeBoard comme une app native** sur son téléphone en Thaïlande! Plus besoin d'ouvrir le navigateur - un simple tap sur l'icône lance l'app en fullscreen. Expérience native avec support offline pour consulter ses données même sans connexion. Parfait pour un usage quotidien mobile! 📱✨
+
+**Status global:** LifeBoard est **100% production-ready avec PWA** pour la deadline (15 fév 2h UTC dans ~10h)! 🚀
+
+**Installation (iOS/Android):**
+1. Ouvrir lifeboard.vercel.app dans Safari/Chrome
+2. Menu "Ajouter à l'écran d'accueil" / "Install app"
+3. L'icône LifeBoard apparaît sur l'écran d'accueil
+4. Lancer l'app = expérience native fullscreen!
+
+---

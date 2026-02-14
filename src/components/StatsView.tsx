@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import StatsCharts from '@/components/StatsCharts';
 
 type Actor = {
   id: string;
@@ -164,6 +165,9 @@ export default function StatsView({ initialWorkLogs, initialMoneyEntries }: Stat
             Vue complète des heures travaillées et revenus générés
           </p>
         </div>
+
+        {/* Charts */}
+        <StatsCharts workLogs={workLogs} moneyEntries={moneyEntries} />
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">

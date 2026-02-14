@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import StatsCharts from '@/components/StatsCharts';
+import DateRangeFilter from '@/components/DateRangeFilter';
 
 type Actor = {
   id: string;
@@ -48,20 +49,37 @@ export default function StatsView({ initialWorkLogs, initialMoneyEntries }: Stat
   const [editHours, setEditHours] = useState<number>(0);
   const [editAmount, setEditAmount] = useState<number>(0);
   const [editDescription, setEditDescription] = useState<string>('');
+  const [dateRange, setDateRange] = useState<{ from: Date | null; to: Date | null }>({
+    from: null,
+    to: null,
+  });
 
-  // Calculate totals
-  const totalHours = workLogs.reduce((sum, log) => sum + log.hours, 0);
-  const totalMoney = moneyEntries.reduce((sum, entry) => sum + entry.amount, 0);
+  // Filter data based on date range
+  const filterByDateRange = <T extends { date: Date }>(items: T[]): T[] => {
+    if (!dateRange.from || !dateRange.to) return items;
+    
+    return items.filter((item) => {
+      const itemDate = new Date(item.date);
+      return itemDate >= dateRange.from! && itemDate <= dateRange.to!;
+    });
+  };
 
-  // Group by actor
-  const hoursByActor = workLogs.reduce((acc, log) => {
+  const filteredWorkLogs = filterByDateRange(workLogs);
+  const filteredMoneyEntries = filterByDateRange(moneyEntries);
+
+  // Calculate totals (using filtered data)
+  const totalHours = filteredWorkLogs.reduce((sum, log) => sum + log.hours, 0);
+  const totalMoney = filteredMoneyEntries.reduce((sum, entry) => sum + entry.amount, 0);
+
+  // Group by actor (using filtered data)
+  const hoursByActor = filteredWorkLogs.reduce((acc, log) => {
     const name = log.actor.name;
     acc[name] = (acc[name] || 0) + log.hours;
     return acc;
   }, {} as Record<string, number>);
 
-  // Group by project
-  const hoursByProject = workLogs.reduce((acc, log) => {
+  // Group by project (using filtered data)
+  const hoursByProject = filteredWorkLogs.reduce((acc, log) => {
     if (log.project) {
       const name = log.project.name;
       acc[name] = (acc[name] || 0) + log.hours;
@@ -69,7 +87,7 @@ export default function StatsView({ initialWorkLogs, initialMoneyEntries }: Stat
     return acc;
   }, {} as Record<string, number>);
 
-  const moneyByProject = moneyEntries.reduce((acc, entry) => {
+  const moneyByProject = filteredMoneyEntries.reduce((acc, entry) => {
     if (entry.project) {
       const name = entry.project.name;
       acc[name] = (acc[name] || 0) + entry.amount;
@@ -166,8 +184,11 @@ export default function StatsView({ initialWorkLogs, initialMoneyEntries }: Stat
           </p>
         </div>
 
+        {/* Date Range Filter */}
+        <DateRangeFilter onRangeChange={setDateRange} />
+
         {/* Charts */}
-        <StatsCharts workLogs={workLogs} moneyEntries={moneyEntries} />
+        <StatsCharts workLogs={filteredWorkLogs} moneyEntries={filteredMoneyEntries} />
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
@@ -217,12 +238,12 @@ export default function StatsView({ initialWorkLogs, initialMoneyEntries }: Stat
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {workLogs.length === 0 ? (
+              {filteredWorkLogs.length === 0 ? (
                 <p className="text-slate-400 text-center py-8">
-                  Aucune entrée pour le moment
+                  Aucune entrée pour cette période
                 </p>
               ) : (
-                workLogs.map((log) => (
+                filteredWorkLogs.map((log) => (
                   <div
                     key={log.id}
                     className="p-4 bg-slate-800 rounded-lg"
@@ -324,12 +345,12 @@ export default function StatsView({ initialWorkLogs, initialMoneyEntries }: Stat
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {moneyEntries.length === 0 ? (
+              {filteredMoneyEntries.length === 0 ? (
                 <p className="text-slate-400 text-center py-8">
-                  Aucune entrée pour le moment
+                  Aucune entrée pour cette période
                 </p>
               ) : (
-                moneyEntries.map((entry) => (
+                filteredMoneyEntries.map((entry) => (
                   <div
                     key={entry.id}
                     className="p-4 bg-slate-800 rounded-lg"

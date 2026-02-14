@@ -549,6 +549,40 @@ Notifications: Crons OpenClaw → Telegram
 
 ---
 
+### Session 17 - 2026-02-14 12:05 UTC 🔨 PROJECTS MANAGER
+**Focus:** Gestion complète des projets depuis l'UI (ONE thing)
+
+**Accompli:**
+- ✅ API Routes créées:
+  - GET /api/projects (avec filtre status optionnel)
+  - POST /api/projects (créer un projet)
+  - PATCH /api/projects/[id] (éditer)
+  - DELETE /api/projects/[id] (supprimer)
+- ✅ Composant ProjectsManager:
+  - Formulaire création (nom, description, progress %, status)
+  - Édition inline de tous les champs (nom, desc, progress, status)
+  - Suppression avec confirmation
+  - Feedback visuel (success/error messages)
+  - UI cohérente avec le thème dark (slate)
+  - Progress bar visuelle
+  - Status badges colorés (actif vert, pause jaune, terminé bleu)
+  - Dates de création affichées
+- ✅ Page /projects dédiée avec navigation complète
+- ✅ Navigation homepage mise à jour (lien "Projets" ajouté)
+- ✅ Build successful - 17 routes générées
+- ✅ Commit + Push
+
+**Routes ajoutées:**
+- `/projects` (static) - Projects management page
+- `/api/projects` (GET, POST)
+- `/api/projects/[id]` (PATCH, DELETE)
+
+**Résultat:** Alex peut maintenant **créer, éditer et supprimer des projets** (LifeBoard, TradePilot, Academy, etc.) directement depuis l'UI! Plus besoin de toucher la BDD pour gérer les projets. Interface intuitive avec formulaire de création, édition inline, et suppression confirmée. Toutes les infos importantes visibles (nom, description, progress %, status, date de création). 🔨✨
+
+**Status global:** LifeBoard est maintenant **100% complet et autonome** pour la gestion du quotidien d'Alex! Planning, Projets, Tasks, Heures, Argent, Vidéos, Emails, Stats... tout est gérable depuis l'UI. Production-ready pour la deadline demain matin! 🚀
+
+---
+
 ## Notes importantes
 
 - **Nastia = PRIORITAIRE** (vidéos qui gagnent de l'argent)

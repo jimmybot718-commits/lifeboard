@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
-import { Mail, Send, CheckCircle2, Star, X, Trash2 } from 'lucide-react'
+import { Mail, Send, CheckCircle2, Star, X, Trash2, Loader2 } from 'lucide-react'
 import { showToast } from './ui/toast'
 
 type EmailStatus = 'sent' | 'replied' | 'interested' | 'rejected' | 'pending'
@@ -45,6 +45,8 @@ export default function EmailList() {
   const [filter, setFilter] = useState<EmailStatus | 'all'>('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [loading, setLoading] = useState(true)
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+  const [isDeleting, setIsDeleting] = useState(false)
   
   // Form state
   const [recipient, setRecipient] = useState('')
@@ -106,6 +108,48 @@ export default function EmailList() {
       showToast('Erreur lors de la suppression', 'error')
     }
   }
+
+  const toggleSelection = (id: string) => {
+    const newSelected = new Set(selectedIds);
+    if (newSelected.has(id)) {
+      newSelected.delete(id);
+    } else {
+      newSelected.add(id);
+    }
+    setSelectedIds(newSelected);
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === filteredEmails.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filteredEmails.map(e => e.id)));
+    }
+  };
+
+  const deleteSelected = async () => {
+    const count = selectedIds.size;
+    if (count === 0) return;
+    
+    if (!confirm(`Supprimer ${count} email${count > 1 ? 's' : ''} sélectionné${count > 1 ? 's' : ''}?`)) return;
+
+    setIsDeleting(true);
+    try {
+      await Promise.all(
+        Array.from(selectedIds).map(id =>
+          fetch(`/api/emails/${id}`, { method: 'DELETE' })
+        )
+      );
+      showToast(`${count} email${count > 1 ? 's' : ''} supprimé${count > 1 ? 's' : ''}`, 'success');
+      setSelectedIds(new Set());
+      fetchEmails();
+    } catch (error) {
+      console.error('Failed to delete emails:', error);
+      showToast('Erreur lors de la suppression', 'error');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   // Client-side filtering by search query
   const filteredEmails = emails.filter((email) => {
@@ -249,19 +293,50 @@ export default function EmailList() {
         </CardContent>
       </Card>
 
-      {/* Filter */}
+      {/* Filter + Bulk Actions */}
       <Card>
         <CardContent className="pt-6">
-          <div className="flex items-center gap-2">
-            <Label>Filtrer:</Label>
-            <Select value={filter} onChange={(e) => setFilter(e.target.value as EmailStatus | 'all')}>
-              <option value="all">Tous</option>
-              <option value="sent">Envoyés</option>
-              <option value="replied">Répondus</option>
-              <option value="interested">Intéressés</option>
-              <option value="rejected">Rejetés</option>
-              <option value="pending">En attente</option>
-            </Select>
+          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Label>Filtrer:</Label>
+              <Select value={filter} onChange={(e) => setFilter(e.target.value as EmailStatus | 'all')}>
+                <option value="all">Tous</option>
+                <option value="sent">Envoyés</option>
+                <option value="replied">Répondus</option>
+                <option value="interested">Intéressés</option>
+                <option value="rejected">Rejetés</option>
+                <option value="pending">En attente</option>
+              </Select>
+            </div>
+
+            {filteredEmails.length > 0 && (
+              <div className="flex items-center gap-3">
+                <label className="flex items-center gap-2 text-sm text-slate-300 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.size === filteredEmails.length && filteredEmails.length > 0}
+                    onChange={toggleSelectAll}
+                    className="w-4 h-4 rounded border-slate-600 bg-slate-700 text-blue-500 focus:ring-2 focus:ring-blue-500"
+                  />
+                  <span>Tout sélectionner</span>
+                </label>
+                
+                {selectedIds.size > 0 && (
+                  <button
+                    onClick={deleteSelected}
+                    disabled={isDeleting}
+                    className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm"
+                  >
+                    {isDeleting ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Trash2 className="w-4 h-4" />
+                    )}
+                    <span>Supprimer ({selectedIds.size})</span>
+                  </button>
+                )}
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -269,9 +344,18 @@ export default function EmailList() {
       {/* Email List */}
       <div className="space-y-4">
         {filteredEmails.map((email) => (
-          <Card key={email.id}>
+          <Card 
+            key={email.id}
+            className={selectedIds.has(email.id) ? 'ring-2 ring-blue-500' : ''}
+          >
             <CardContent className="pt-6">
-              <div className="flex items-start justify-between">
+              <div className="flex items-start justify-between gap-3">
+                <input
+                  type="checkbox"
+                  checked={selectedIds.has(email.id)}
+                  onChange={() => toggleSelection(email.id)}
+                  className="mt-1 w-4 h-4 rounded border-slate-600 bg-slate-700 text-blue-500 focus:ring-2 focus:ring-blue-500 cursor-pointer flex-shrink-0"
+                />
                 <div className="flex-1 space-y-2">
                   <div className="flex items-center gap-2">
                     <Mail className="w-4 h-4 text-gray-500" />

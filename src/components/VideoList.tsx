@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 // Removed complex Select components - using native HTML select instead
-import { Trash2, ExternalLink, Plus } from 'lucide-react';
+import { Trash2, ExternalLink, Plus, Loader2 } from 'lucide-react';
 import { ErrorCard } from './ui/error';
 import { LoadingCard } from './ui/loading';
 import { showToast } from './ui/toast';
@@ -31,6 +31,8 @@ export default function VideoList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [isDeleting, setIsDeleting] = useState(false);
   const [newVideo, setNewVideo] = useState({
     url: '',
     title: '',
@@ -104,6 +106,48 @@ export default function VideoList() {
     } catch (error) {
       console.error('Error deleting video:', error);
       showToast('Erreur lors de la suppression', 'error');
+    }
+  };
+
+  const toggleSelection = (id: string) => {
+    const newSelected = new Set(selectedIds);
+    if (newSelected.has(id)) {
+      newSelected.delete(id);
+    } else {
+      newSelected.add(id);
+    }
+    setSelectedIds(newSelected);
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === filteredVideos.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filteredVideos.map(v => v.id)));
+    }
+  };
+
+  const deleteSelected = async () => {
+    const count = selectedIds.size;
+    if (count === 0) return;
+    
+    if (!confirm(`Supprimer ${count} vidéo${count > 1 ? 's' : ''} sélectionnée${count > 1 ? 's' : ''}?`)) return;
+
+    setIsDeleting(true);
+    try {
+      await Promise.all(
+        Array.from(selectedIds).map(id =>
+          fetch(`/api/videos/${id}`, { method: 'DELETE' })
+        )
+      );
+      showToast(`${count} vidéo${count > 1 ? 's' : ''} supprimée${count > 1 ? 's' : ''}`, 'success');
+      setSelectedIds(new Set());
+      fetchVideos();
+    } catch (error) {
+      console.error('Failed to delete videos:', error);
+      showToast('Erreur lors de la suppression', 'error');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -181,7 +225,7 @@ export default function VideoList() {
       </div>
 
       {/* Header + Filters */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
         <div className="flex gap-2">
           <Button
             variant={filter === 'all' ? 'default' : 'outline'}
@@ -206,10 +250,41 @@ export default function VideoList() {
           </Button>
         </div>
 
-        <Button onClick={() => setShowAddForm(!showAddForm)} size="sm">
-          <Plus className="h-4 w-4 mr-2" />
-          Ajouter
-        </Button>
+        <div className="flex items-center gap-3">
+          {filteredVideos.length > 0 && (
+            <>
+              <label className="flex items-center gap-2 text-sm text-slate-300 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={selectedIds.size === filteredVideos.length && filteredVideos.length > 0}
+                  onChange={toggleSelectAll}
+                  className="w-4 h-4 rounded border-slate-600 bg-slate-700 text-blue-500 focus:ring-2 focus:ring-blue-500"
+                />
+                <span>Tout sélectionner</span>
+              </label>
+              
+              {selectedIds.size > 0 && (
+                <button
+                  onClick={deleteSelected}
+                  disabled={isDeleting}
+                  className="flex items-center gap-2 px-3 py-1.5 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  {isDeleting ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Trash2 className="w-4 h-4" />
+                  )}
+                  <span>Supprimer ({selectedIds.size})</span>
+                </button>
+              )}
+            </>
+          )}
+
+          <Button onClick={() => setShowAddForm(!showAddForm)} size="sm">
+            <Plus className="h-4 w-4 mr-2" />
+            Ajouter
+          </Button>
+        </div>
       </div>
 
       {/* Add Form */}
@@ -274,9 +349,18 @@ export default function VideoList() {
           </Card>
         ) : (
           filteredVideos.map((video) => (
-            <Card key={video.id}>
+            <Card 
+              key={video.id} 
+              className={selectedIds.has(video.id) ? 'ring-2 ring-blue-500' : ''}
+            >
               <CardContent className="py-4">
-                <div className="flex justify-between items-start">
+                <div className="flex justify-between items-start gap-3">
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.has(video.id)}
+                    onChange={() => toggleSelection(video.id)}
+                    className="mt-1 w-4 h-4 rounded border-slate-600 bg-slate-700 text-blue-500 focus:ring-2 focus:ring-blue-500 cursor-pointer flex-shrink-0"
+                  />
                   <div className="flex-1 space-y-1">
                     <div className="flex items-center gap-2">
                       {video.title ? (

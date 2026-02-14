@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Check, X, Loader2, Clock, AlertCircle } from 'lucide-react';
+import { Check, X, Loader2, Clock, AlertCircle, Trash2 } from 'lucide-react';
 import { ErrorCard } from './ui/error';
 import { LoadingCard } from './ui/loading';
 import { showToast } from './ui/toast';
@@ -29,6 +29,8 @@ export default function TaskList() {
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | 'pending' | 'done'>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const fetchTasks = async () => {
     try {
@@ -77,6 +79,48 @@ export default function TaskList() {
     } catch (error) {
       console.error('Failed to delete task:', error);
       showToast('Erreur lors de la suppression', 'error');
+    }
+  };
+
+  const toggleSelection = (id: string) => {
+    const newSelected = new Set(selectedIds);
+    if (newSelected.has(id)) {
+      newSelected.delete(id);
+    } else {
+      newSelected.add(id);
+    }
+    setSelectedIds(newSelected);
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === filteredTasks.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filteredTasks.map(t => t.id)));
+    }
+  };
+
+  const deleteSelected = async () => {
+    const count = selectedIds.size;
+    if (count === 0) return;
+    
+    if (!confirm(`Supprimer ${count} tâche${count > 1 ? 's' : ''} sélectionnée${count > 1 ? 's' : ''}?`)) return;
+
+    setIsDeleting(true);
+    try {
+      await Promise.all(
+        Array.from(selectedIds).map(id =>
+          fetch(`/api/tasks/${id}`, { method: 'DELETE' })
+        )
+      );
+      showToast(`${count} tâche${count > 1 ? 's' : ''} supprimée${count > 1 ? 's' : ''}`, 'success');
+      setSelectedIds(new Set());
+      fetchTasks();
+    } catch (error) {
+      console.error('Failed to delete tasks:', error);
+      showToast('Erreur lors de la suppression', 'error');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -153,37 +197,69 @@ export default function TaskList() {
         </svg>
       </div>
 
-      <div className="flex gap-2 border-b border-slate-700 pb-2">
-        <button
-          onClick={() => setFilter('all')}
-          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-            filter === 'all'
-              ? 'bg-slate-600 text-white'
-              : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
-          }`}
-        >
-          Toutes
-        </button>
-        <button
-          onClick={() => setFilter('pending')}
-          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-            filter === 'pending'
-              ? 'bg-slate-600 text-white'
-              : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
-          }`}
-        >
-          En cours
-        </button>
-        <button
-          onClick={() => setFilter('done')}
-          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-            filter === 'done'
-              ? 'bg-slate-600 text-white'
-              : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
-          }`}
-        >
-          Terminées
-        </button>
+      <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center justify-between border-b border-slate-700 pb-2">
+        <div className="flex gap-2">
+          <button
+            onClick={() => setFilter('all')}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              filter === 'all'
+                ? 'bg-slate-600 text-white'
+                : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+            }`}
+          >
+            Toutes
+          </button>
+          <button
+            onClick={() => setFilter('pending')}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              filter === 'pending'
+                ? 'bg-slate-600 text-white'
+                : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+            }`}
+          >
+            En cours
+          </button>
+          <button
+            onClick={() => setFilter('done')}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              filter === 'done'
+                ? 'bg-slate-600 text-white'
+                : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+            }`}
+          >
+            Terminées
+          </button>
+        </div>
+
+        {/* Bulk actions */}
+        {filteredTasks.length > 0 && (
+          <div className="flex items-center gap-3">
+            <label className="flex items-center gap-2 text-sm text-slate-300 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={selectedIds.size === filteredTasks.length && filteredTasks.length > 0}
+                onChange={toggleSelectAll}
+                className="w-4 h-4 rounded border-slate-600 bg-slate-700 text-blue-500 focus:ring-2 focus:ring-blue-500"
+              />
+              <span>Tout sélectionner</span>
+            </label>
+            
+            {selectedIds.size > 0 && (
+              <button
+                onClick={deleteSelected}
+                disabled={isDeleting}
+                className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                {isDeleting ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Trash2 className="w-4 h-4" />
+                )}
+                <span>Supprimer ({selectedIds.size})</span>
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
       {filteredTasks.length === 0 ? (
@@ -195,10 +271,18 @@ export default function TaskList() {
           {filteredTasks.map((task) => (
             <div
               key={task.id}
-              className={`border rounded-lg p-4 ${getStatusColor(task.status)}`}
+              className={`border rounded-lg p-4 ${getStatusColor(task.status)} ${
+                selectedIds.has(task.id) ? 'ring-2 ring-blue-500' : ''
+              } transition-all`}
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-3 flex-1">
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.has(task.id)}
+                    onChange={() => toggleSelection(task.id)}
+                    className="mt-1 w-4 h-4 rounded border-gray-400 text-blue-500 focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                  />
                   {getStatusIcon(task.status)}
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">

@@ -1,4 +1,4 @@
-import prisma from '@/lib/prisma'
+import { prisma } from '@/lib/prisma'
 import ActivityTimeline from '@/components/ActivityTimeline'
 
 // Force dynamic rendering

@@ -173,6 +173,56 @@ export default function StatsView({ initialWorkLogs, initialMoneyEntries }: Stat
     }
   };
 
+  const handleExportCSV = () => {
+    // Generate CSV content
+    let csv = '';
+    
+    // Work Logs section
+    csv += 'HEURES TRAVAILLÉES\n';
+    csv += 'Date,Acteur,Projet,Heures,Notes\n';
+    filteredWorkLogs.forEach(log => {
+      const date = new Date(log.date).toLocaleDateString('fr-FR');
+      const actor = log.actor.name;
+      const project = log.project?.name || 'N/A';
+      const hours = log.hours;
+      const notes = (log.notes || '').replace(/,/g, ';'); // Replace commas to avoid CSV issues
+      csv += `${date},${actor},${project},${hours},"${notes}"\n`;
+    });
+    
+    csv += '\n';
+    
+    // Money Entries section
+    csv += 'REVENUS\n';
+    csv += 'Date,Projet,Montant (CHF),Description\n';
+    filteredMoneyEntries.forEach(entry => {
+      const date = new Date(entry.date).toLocaleDateString('fr-FR');
+      const project = entry.project?.name || 'N/A';
+      const amount = entry.amount.toFixed(2);
+      const description = (entry.description || '').replace(/,/g, ';');
+      csv += `${date},${project},${amount},"${description}"\n`;
+    });
+    
+    csv += '\n';
+    
+    // Summary
+    csv += 'RÉSUMÉ\n';
+    csv += `Total Heures,${totalHours.toFixed(2)}\n`;
+    csv += `Total Revenus (CHF),${totalMoney.toFixed(2)}\n`;
+    
+    // Create blob and download
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    const fileName = `lifeboard-stats-${new Date().toISOString().split('T')[0]}.csv`;
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', fileName);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="min-h-screen bg-slate-950 text-white p-6">
       <div className="max-w-7xl mx-auto">
@@ -184,8 +234,18 @@ export default function StatsView({ initialWorkLogs, initialMoneyEntries }: Stat
           </p>
         </div>
 
-        {/* Date Range Filter */}
-        <DateRangeFilter onRangeChange={setDateRange} />
+        {/* Date Range Filter & Export */}
+        <div className="mb-6 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+          <div className="flex-1">
+            <DateRangeFilter onRangeChange={setDateRange} />
+          </div>
+          <Button
+            onClick={handleExportCSV}
+            className="bg-emerald-600 hover:bg-emerald-700 text-white whitespace-nowrap"
+          >
+            📊 Export CSV
+          </Button>
+        </div>
 
         {/* Charts */}
         <StatsCharts workLogs={filteredWorkLogs} moneyEntries={filteredMoneyEntries} />

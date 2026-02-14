@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { LoadingSpinner } from './ui/loading'
+import { showToast } from './ui/toast'
 
 type Actor = { id: number; label: string }
 type Project = { id: number; name: string }
@@ -14,7 +15,6 @@ interface QuickActionsProps {
 export default function QuickActions({ actors, projects }: QuickActionsProps) {
   const [activeTab, setActiveTab] = useState<'work' | 'money'>('work')
   const [loading, setLoading] = useState(false)
-  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
 
   // Work form state
   const [workForm, setWorkForm] = useState({
@@ -34,7 +34,6 @@ export default function QuickActions({ actors, projects }: QuickActionsProps) {
   const handleWorkSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setMessage(null)
 
     try {
       const res = await fetch('/api/quick-log', {
@@ -45,13 +44,13 @@ export default function QuickActions({ actors, projects }: QuickActionsProps) {
 
       if (!res.ok) throw new Error('Failed to log work')
 
-      setMessage({ type: 'success', text: `✅ ${workForm.hours}h loggées!` })
+      showToast(`${workForm.hours}h loggées avec succès!`, 'success')
       setWorkForm({ actorId: workForm.actorId, projectId: workForm.projectId, hours: '', description: '' })
       
       // Refresh page after delay
       setTimeout(() => window.location.reload(), 1500)
     } catch (error) {
-      setMessage({ type: 'error', text: '❌ Erreur lors du logging' })
+      showToast('Erreur lors du logging des heures', 'error')
     } finally {
       setLoading(false)
     }
@@ -60,7 +59,6 @@ export default function QuickActions({ actors, projects }: QuickActionsProps) {
   const handleMoneySubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setMessage(null)
 
     try {
       const res = await fetch('/api/quick-log', {
@@ -71,13 +69,13 @@ export default function QuickActions({ actors, projects }: QuickActionsProps) {
 
       if (!res.ok) throw new Error('Failed to log money')
 
-      setMessage({ type: 'success', text: `✅ ${moneyForm.amount} CHF ajoutés!` })
+      showToast(`${moneyForm.amount} CHF ajoutés avec succès!`, 'success')
       setMoneyForm({ amount: '', description: '', projectId: moneyForm.projectId })
       
       // Refresh page after delay
       setTimeout(() => window.location.reload(), 1500)
     } catch (error) {
-      setMessage({ type: 'error', text: '❌ Erreur lors du logging' })
+      showToast('Erreur lors du logging de l\'argent', 'error')
     } finally {
       setLoading(false)
     }
@@ -110,19 +108,6 @@ export default function QuickActions({ actors, projects }: QuickActionsProps) {
           Logger Argent
         </button>
       </div>
-
-      {/* Success/Error Message */}
-      {message && (
-        <div
-          className={`mb-4 p-3 rounded ${
-            message.type === 'success'
-              ? 'bg-green-500/20 border border-green-500/30 text-green-400'
-              : 'bg-red-500/20 border border-red-500/30 text-red-400'
-          }`}
-        >
-          {message.text}
-        </div>
-      )}
 
       {/* Work Form */}
       {activeTab === 'work' && (

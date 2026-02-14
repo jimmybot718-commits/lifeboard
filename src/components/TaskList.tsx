@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Check, X, Loader2, Clock, AlertCircle } from 'lucide-react';
 import { ErrorCard } from './ui/error';
 import { LoadingCard } from './ui/loading';
+import { showToast } from './ui/toast';
 
 type Task = {
   id: string;
@@ -59,9 +60,11 @@ export default function TaskList() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status }),
       });
+      showToast('Statut de la tâche mis à jour', 'success');
       fetchTasks();
     } catch (error) {
       console.error('Failed to update task:', error);
+      showToast('Erreur lors de la mise à jour', 'error');
     }
   };
 
@@ -69,9 +72,11 @@ export default function TaskList() {
     if (!confirm('Effacer cette tâche?')) return;
     try {
       await fetch(`/api/tasks/${id}`, { method: 'DELETE' });
+      showToast('Tâche supprimée', 'success');
       fetchTasks();
     } catch (error) {
       console.error('Failed to delete task:', error);
+      showToast('Erreur lors de la suppression', 'error');
     }
   };
 

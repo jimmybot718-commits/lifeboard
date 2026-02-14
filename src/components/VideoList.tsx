@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Trash2, ExternalLink, Plus } from 'lucide-react';
 import { ErrorCard } from './ui/error';
 import { LoadingCard } from './ui/loading';
+import { showToast } from './ui/toast';
 
 interface InstagramVideo {
   id: string;
@@ -74,6 +75,7 @@ export default function VideoList() {
       });
 
       if (res.ok) {
+        showToast('Vidéo ajoutée avec succès', 'success');
         setNewVideo({
           url: '',
           title: '',
@@ -86,6 +88,7 @@ export default function VideoList() {
       }
     } catch (error) {
       console.error('Error adding video:', error);
+      showToast('Erreur lors de l\'ajout de la vidéo', 'error');
     }
   };
 
@@ -96,9 +99,11 @@ export default function VideoList() {
       await fetch(`/api/videos/${id}`, {
         method: 'DELETE',
       });
+      showToast('Vidéo supprimée', 'success');
       fetchVideos();
     } catch (error) {
       console.error('Error deleting video:', error);
+      showToast('Erreur lors de la suppression', 'error');
     }
   };
 
@@ -112,9 +117,11 @@ export default function VideoList() {
           ...(status === 'posted' && { postedAt: new Date().toISOString() }),
         }),
       });
+      showToast('Statut de la vidéo mis à jour', 'success');
       fetchVideos();
     } catch (error) {
       console.error('Error updating video:', error);
+      showToast('Erreur lors de la mise à jour', 'error');
     }
   };
 

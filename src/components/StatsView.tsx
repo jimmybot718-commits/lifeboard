@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import StatsCharts from '@/components/StatsCharts';
 import DateRangeFilter from '@/components/DateRangeFilter';
+import { showToast } from './ui/toast';
 
 type Actor = {
   id: string;
@@ -102,8 +103,9 @@ export default function StatsView({ initialWorkLogs, initialMoneyEntries }: Stat
       const res = await fetch(`/api/worklogs/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Failed to delete');
       setWorkLogs(workLogs.filter(log => log.id !== id));
+      showToast('Entrée de travail supprimée', 'success');
     } catch (error) {
-      alert('Erreur lors de la suppression');
+      showToast('Erreur lors de la suppression', 'error');
     }
   };
 
@@ -114,8 +116,9 @@ export default function StatsView({ initialWorkLogs, initialMoneyEntries }: Stat
       const res = await fetch(`/api/money/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Failed to delete');
       setMoneyEntries(moneyEntries.filter(entry => entry.id !== id));
+      showToast('Entrée d\'argent supprimée', 'success');
     } catch (error) {
-      alert('Erreur lors de la suppression');
+      showToast('Erreur lors de la suppression', 'error');
     }
   };
 
@@ -147,8 +150,9 @@ export default function StatsView({ initialWorkLogs, initialMoneyEntries }: Stat
       const updated = await res.json();
       setWorkLogs(workLogs.map(log => log.id === id ? updated : log));
       setEditingWork(null);
+      showToast('Heures mises à jour avec succès', 'success');
     } catch (error) {
-      alert('Erreur lors de la mise à jour');
+      showToast('Erreur lors de la mise à jour', 'error');
     }
   };
 
@@ -168,8 +172,9 @@ export default function StatsView({ initialWorkLogs, initialMoneyEntries }: Stat
       const updated = await res.json();
       setMoneyEntries(moneyEntries.map(entry => entry.id === id ? updated : entry));
       setEditingMoney(null);
+      showToast('Revenus mis à jour avec succès', 'success');
     } catch (error) {
-      alert('Erreur lors de la mise à jour');
+      showToast('Erreur lors de la mise à jour', 'error');
     }
   };
 

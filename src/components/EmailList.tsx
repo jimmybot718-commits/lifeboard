@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
 import { Mail, Send, CheckCircle2, Star, X, Trash2 } from 'lucide-react'
+import { showToast } from './ui/toast'
 
 type EmailStatus = 'sent' | 'replied' | 'interested' | 'rejected' | 'pending'
 
@@ -65,30 +66,45 @@ export default function EmailList() {
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault()
-    await fetch('/api/emails', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ recipient, subject, body, notes: notes || null })
-    })
-    setRecipient('')
-    setSubject('')
-    setBody('')
-    setNotes('')
-    fetchEmails()
+    try {
+      await fetch('/api/emails', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ recipient, subject, body, notes: notes || null })
+      })
+      showToast('Email ajouté avec succès', 'success')
+      setRecipient('')
+      setSubject('')
+      setBody('')
+      setNotes('')
+      fetchEmails()
+    } catch (error) {
+      showToast('Erreur lors de l\'ajout de l\'email', 'error')
+    }
   }
 
   const updateStatus = async (id: string, status: EmailStatus) => {
-    await fetch(`/api/emails/${id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status })
-    })
-    fetchEmails()
+    try {
+      await fetch(`/api/emails/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+      })
+      showToast('Statut de l\'email mis à jour', 'success')
+      fetchEmails()
+    } catch (error) {
+      showToast('Erreur lors de la mise à jour', 'error')
+    }
   }
 
   const deleteEmail = async (id: string) => {
-    await fetch(`/api/emails/${id}`, { method: 'DELETE' })
-    fetchEmails()
+    try {
+      await fetch(`/api/emails/${id}`, { method: 'DELETE' })
+      showToast('Email supprimé', 'success')
+      fetchEmails()
+    } catch (error) {
+      showToast('Erreur lors de la suppression', 'error')
+    }
   }
 
   // Client-side filtering by search query

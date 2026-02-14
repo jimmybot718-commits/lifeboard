@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { LoadingSpinner } from './ui/loading'
 
 type Actor = { id: number; label: string }
 type Project = { id: number; name: string }
@@ -188,8 +189,9 @@ export default function QuickActions({ actors, projects }: QuickActionsProps) {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded transition disabled:opacity-50"
+            className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded transition disabled:opacity-50 flex items-center justify-center gap-2"
           >
+            {loading && <LoadingSpinner size="sm" />}
             {loading ? 'En cours...' : 'Logger Heures'}
           </button>
         </form>
@@ -243,8 +245,9 @@ export default function QuickActions({ actors, projects }: QuickActionsProps) {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded transition disabled:opacity-50"
+            className="w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded transition disabled:opacity-50 flex items-center justify-center gap-2"
           >
+            {loading && <LoadingSpinner size="sm" />}
             {loading ? 'En cours...' : 'Logger Argent'}
           </button>
         </form>

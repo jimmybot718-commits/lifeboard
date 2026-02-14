@@ -8,6 +8,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 // Removed complex Select components - using native HTML select instead
 import { Trash2, ExternalLink, Plus } from 'lucide-react';
+import { ErrorCard } from './ui/error';
+import { LoadingCard } from './ui/loading';
 
 interface InstagramVideo {
   id: string;
@@ -25,6 +27,7 @@ export default function VideoList() {
   const [videos, setVideos] = useState<InstagramVideo[]>([]);
   const [filter, setFilter] = useState<string>('all');
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
   const [newVideo, setNewVideo] = useState({
     url: '',
@@ -40,16 +43,20 @@ export default function VideoList() {
 
   const fetchVideos = async () => {
     try {
+      setLoading(true);
+      setError(null);
       const params = new URLSearchParams();
       if (filter !== 'all') {
         params.append('forWhom', filter);
       }
       
       const res = await fetch(`/api/videos?${params.toString()}`);
+      if (!res.ok) throw new Error('Failed to fetch videos');
       const data = await res.json();
       setVideos(data);
-    } catch (error) {
-      console.error('Error fetching videos:', error);
+    } catch (err) {
+      console.error('Error fetching videos:', err);
+      setError(err instanceof Error ? err.message : 'Une erreur est survenue');
     } finally {
       setLoading(false);
     }
@@ -124,7 +131,8 @@ export default function VideoList() {
     );
   };
 
-  if (loading) return <div>Chargement...</div>;
+  if (loading) return <LoadingCard title="Chargement des vidéos..." />;
+  if (error) return <ErrorCard message={error} retry={fetchVideos} />;
 
   return (
     <div className="space-y-4">

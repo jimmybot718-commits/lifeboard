@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { Check, X, Loader2, Clock, AlertCircle } from 'lucide-react';
+import { ErrorCard } from './ui/error';
+import { LoadingCard } from './ui/loading';
 
 type Task = {
   id: string;
@@ -23,18 +25,23 @@ type Task = {
 export default function TaskList() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | 'pending' | 'done'>('all');
 
   const fetchTasks = async () => {
     try {
+      setLoading(true);
+      setError(null);
       const url = filter === 'all' 
         ? '/api/tasks'
         : `/api/tasks?status=${filter}`;
       const res = await fetch(url);
+      if (!res.ok) throw new Error('Failed to fetch tasks');
       const data = await res.json();
       setTasks(data);
-    } catch (error) {
-      console.error('Failed to fetch tasks:', error);
+    } catch (err) {
+      console.error('Failed to fetch tasks:', err);
+      setError(err instanceof Error ? err.message : 'Une erreur est survenue');
     } finally {
       setLoading(false);
     }
@@ -94,11 +101,11 @@ export default function TaskList() {
   };
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center p-12">
-        <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
-      </div>
-    );
+    return <LoadingCard title="Chargement des tâches..." />;
+  }
+
+  if (error) {
+    return <ErrorCard message={error} retry={fetchTasks} />;
   }
 
   return (

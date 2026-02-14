@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
+import QuickActions from '@/components/QuickActions'
 
 export const dynamic = 'force-dynamic'
 
@@ -84,12 +85,27 @@ async function getTodaySchedule() {
   })
 }
 
+async function getActors() {
+  return await prisma.actor.findMany({
+    orderBy: { label: 'asc' }
+  })
+}
+
+async function getActiveProjects() {
+  return await prisma.project.findMany({
+    where: { status: 'active' },
+    orderBy: { name: 'asc' }
+  })
+}
+
 export default async function Home() {
   const stats = await getStats()
   const tasks = await getRecentTasks()
   const crons = await getRecentCrons()
   const projects = await getProjects()
   const schedule = await getTodaySchedule()
+  const actors = await getActors()
+  const activeProjects = await getActiveProjects()
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 text-white">
@@ -112,6 +128,11 @@ export default async function Home() {
           <StatCard title="Heures Travaillées" value={`${stats.hoursToday}h`} color="green" />
           <StatCard title="Projets Actifs" value={stats.activeProjects.toString()} color="purple" />
           <StatCard title="Argent ce Mois" value={`${stats.moneyThisMonth.toFixed(0)} CHF`} color="amber" />
+        </div>
+
+        {/* Quick Actions */}
+        <div className="mb-8">
+          <QuickActions actors={actors} projects={activeProjects} />
         </div>
 
         {/* Main Grid */}

@@ -8,6 +8,7 @@ export default function MobileNav() {
 
   const links = [
     { href: '/', label: 'Dashboard' },
+    { href: '/activity', label: '📜 Activity' },
     { href: '/schedule', label: 'Planning' },
     { href: '/nastia', label: '🎬 Nastia' },
     { href: '/projects', label: 'Projets' },

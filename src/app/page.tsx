@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
-import QuickActions from '@/components/QuickActions'
 import Header from '@/components/Header'
+import QuickActions from '@/components/QuickActions'
 
 export const dynamic = 'force-dynamic'
 
@@ -10,32 +10,21 @@ async function getStats() {
   const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
 
-  const [tasksToday, workLogsToday, moneyThisMonth, activeProjects] = await Promise.all([
-    // Tasks today
+  const [tasksToday, tasksDone, workLogsToday, moneyThisMonth, activeProjects] = await Promise.all([
     prisma.task.count({
-      where: {
-        createdAt: { gte: startOfDay }
-      }
+      where: { createdAt: { gte: startOfDay } }
     }),
-    
-    // Hours worked today
+    prisma.task.count({
+      where: { status: 'done', completedAt: { gte: startOfDay } }
+    }),
     prisma.workLog.aggregate({
-      where: {
-        date: { gte: startOfDay }
-      },
+      where: { date: { gte: startOfDay } },
       _sum: { hours: true }
     }),
-    
-    // Money this month
     prisma.moneyEntry.aggregate({
-      where: {
-        date: { gte: startOfMonth },
-        type: 'income'
-      },
+      where: { date: { gte: startOfMonth }, type: 'income' },
       _sum: { amount: true }
     }),
-    
-    // Active projects
     prisma.project.count({
       where: { status: 'active' }
     })
@@ -43,53 +32,62 @@ async function getStats() {
 
   return {
     tasksToday,
+    tasksDone,
     hoursToday: workLogsToday._sum.hours || 0,
     moneyThisMonth: moneyThisMonth._sum.amount || 0,
     activeProjects
   }
 }
 
-async function getRecentTasks() {
-  return await prisma.task.findMany({
-    take: 5,
-    orderBy: { createdAt: 'desc' },
-    include: { actor: true, project: true }
-  })
+async function getActorData(actorName: string) {
+  const actor = await prisma.actor.findUnique({ where: { name: actorName } })
+  if (!actor) return null
+
+  const now = new Date()
+  const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  const startOfWeek = new Date(now)
+  startOfWeek.setDate(now.getDate() - now.getDay())
+
+  const [tasks, schedule, projects, hoursThisWeek] = await Promise.all([
+    prisma.task.findMany({
+      where: { actorId: actor.id },
+      orderBy: { createdAt: 'desc' },
+      take: 5,
+      include: { project: true }
+    }),
+    prisma.scheduleEntry.findMany({
+      where: { actorId: actor.id, date: startOfDay },
+      orderBy: { startTime: 'asc' }
+    }),
+    prisma.project.findMany({
+      where: { owner: actorName, status: 'active' },
+      orderBy: { updatedAt: 'desc' },
+      take: 4
+    }),
+    prisma.workLog.aggregate({
+      where: { actorId: actor.id, date: { gte: startOfWeek } },
+      _sum: { hours: true }
+    })
+  ])
+
+  return {
+    actor,
+    tasks,
+    schedule,
+    projects,
+    hoursThisWeek: hoursThisWeek._sum.hours || 0
+  }
 }
 
 async function getRecentCrons() {
   return await prisma.cronExecution.findMany({
-    take: 5,
+    take: 8,
     orderBy: { startedAt: 'desc' }
   })
 }
 
-async function getProjects() {
-  return await prisma.project.findMany({
-    orderBy: { updatedAt: 'desc' }
-  })
-}
-
-async function getTodaySchedule() {
-  const now = new Date()
-  const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-  
-  return await prisma.scheduleEntry.findMany({
-    where: {
-      date: startOfDay
-    },
-    include: {
-      actor: true,
-      project: true
-    },
-    orderBy: { startTime: 'asc' }
-  })
-}
-
 async function getActors() {
-  return await prisma.actor.findMany({
-    orderBy: { label: 'asc' }
-  })
+  return await prisma.actor.findMany({ orderBy: { label: 'asc' } })
 }
 
 async function getActiveProjects() {
@@ -100,243 +98,365 @@ async function getActiveProjects() {
 }
 
 export default async function Home() {
-  const stats = await getStats()
-  const tasks = await getRecentTasks()
-  const crons = await getRecentCrons()
-  const projects = await getProjects()
-  const schedule = await getTodaySchedule()
-  const actors = await getActors()
-  const activeProjects = await getActiveProjects()
+  const [stats, alexData, nastiaData, crons, actors, activeProjects] = await Promise.all([
+    getStats(),
+    getActorData('alex'),
+    getActorData('nastia'),
+    getRecentCrons(),
+    getActors(),
+    getActiveProjects()
+  ])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 text-white">
-      <Header />
+    <div className="min-h-screen bg-carbon-950 text-white relative overflow-hidden">
+      {/* Background effects */}
+      <div className="noise-overlay" />
+      <div className="glow-orb w-[600px] h-[600px] bg-neon-cyan -top-[300px] -right-[200px]" />
+      <div className="glow-orb w-[500px] h-[500px] bg-neon-purple -bottom-[200px] -left-[200px]" />
+      <div className="absolute inset-0 bg-grid opacity-50" />
 
-      <main className="container mx-auto p-6">
-        {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <StatCard title="Tasks Aujourd'hui" value={stats.tasksToday.toString()} color="blue" />
-          <StatCard title="Heures Travaillées" value={`${stats.hoursToday}h`} color="green" />
-          <StatCard title="Projets Actifs" value={stats.activeProjects.toString()} color="purple" />
-          <StatCard title="Argent ce Mois" value={`${stats.moneyThisMonth.toFixed(0)} CHF`} color="amber" />
-        </div>
+      <div className="relative z-10">
+        <Header />
 
-        {/* Quick Actions */}
-        <div className="mb-8">
-          <QuickActions actors={actors} projects={activeProjects} />
-        </div>
-
-        {/* Main Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Planning */}
-          <div className="bg-slate-800 rounded-lg p-6 border border-slate-700">
-            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              📅 Planning Aujourd&apos;hui
-            </h2>
-            <div className="space-y-3">
-              {schedule.length === 0 ? (
-                <div className="text-slate-400 text-sm">Aucun événement prévu</div>
-              ) : (
-                schedule.map(entry => (
-                  <PlanningItem 
-                    key={entry.id}
-                    time={entry.startTime}
-                    title={entry.title}
-                    actor={entry.actor.label}
-                  />
-                ))
-              )}
-            </div>
+        <main className="container mx-auto px-4 py-8 max-w-[1600px]">
+          {/* Stats Row */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 animate-slide-up">
+            <StatCard
+              label="Tasks Today"
+              value={stats.tasksToday.toString()}
+              subvalue={`${stats.tasksDone} completed`}
+              color="cyan"
+            />
+            <StatCard
+              label="Hours Worked"
+              value={`${stats.hoursToday}h`}
+              subvalue="today"
+              color="green"
+            />
+            <StatCard
+              label="Active Projects"
+              value={stats.activeProjects.toString()}
+              subvalue="in progress"
+              color="purple"
+            />
+            <StatCard
+              label="Revenue"
+              value={`${stats.moneyThisMonth.toFixed(0)}`}
+              subvalue="CHF this month"
+              color="orange"
+            />
           </div>
 
-          {/* Tasks */}
-          <div className="bg-slate-800 rounded-lg p-6 border border-slate-700">
-            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              ✅ Tasks Récentes
-            </h2>
-            <div className="space-y-3">
-              {tasks.length === 0 ? (
-                <TaskItem title="Aucune tâche pour le moment" status="pending" />
-              ) : (
-                tasks.slice(0, 5).map(task => (
-                  <TaskItem 
-                    key={task.id}
-                    title={task.title}
-                    status={task.status}
-                    actor={task.actor.label}
-                  />
-                ))
-              )}
+          {/* Main Grid - 3 Columns for People */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            {/* Alex Column */}
+            <PersonColumn
+              name="Alex"
+              role="Founder"
+              color="cyan"
+              data={alexData}
+              isOnline={true}
+            />
+
+            {/* Nastia Column */}
+            <PersonColumn
+              name="Nastia"
+              role="Content Creator"
+              color="pink"
+              data={nastiaData}
+              isOnline={false}
+            />
+
+            {/* Jimmy Column - AI Assistant */}
+            <JimmyColumn crons={crons} />
+          </div>
+
+          {/* Quick Actions */}
+          <div className="animate-slide-up animate-delay-400">
+            <QuickActions actors={actors} projects={activeProjects} />
+          </div>
+        </main>
+      </div>
+    </div>
+  )
+}
+
+function StatCard({ label, value, subvalue, color }: {
+  label: string
+  value: string
+  subvalue: string
+  color: 'cyan' | 'green' | 'purple' | 'orange'
+}) {
+  const colorMap = {
+    cyan: 'neon-border-cyan text-neon-cyan',
+    green: 'neon-border-green text-neon-green',
+    purple: 'neon-border-purple text-neon-purple',
+    orange: 'border-neon-orange/30 text-neon-orange'
+  }
+
+  return (
+    <div className={`glass-card p-5 ${colorMap[color]}`}>
+      <div className="text-xs font-medium text-white/50 uppercase tracking-wider mb-2">
+        {label}
+      </div>
+      <div className="text-3xl font-bold mb-1">{value}</div>
+      <div className="text-xs text-white/40">{subvalue}</div>
+    </div>
+  )
+}
+
+function PersonColumn({ name, role, color, data, isOnline }: {
+  name: string
+  role: string
+  color: 'cyan' | 'pink' | 'purple'
+  data: Awaited<ReturnType<typeof getActorData>>
+  isOnline: boolean
+}) {
+  const colorClasses = {
+    cyan: {
+      ring: 'avatar-ring-cyan',
+      border: 'neon-border-cyan',
+      text: 'text-neon-cyan',
+      bg: 'bg-neon-cyan',
+      gradient: 'from-neon-cyan/20 to-transparent'
+    },
+    pink: {
+      ring: 'avatar-ring-purple',
+      border: 'neon-border-pink',
+      text: 'text-neon-pink',
+      bg: 'bg-neon-pink',
+      gradient: 'from-neon-pink/20 to-transparent'
+    },
+    purple: {
+      ring: 'avatar-ring-purple',
+      border: 'neon-border-purple',
+      text: 'text-neon-purple',
+      bg: 'bg-neon-purple',
+      gradient: 'from-neon-purple/20 to-transparent'
+    }
+  }
+
+  const c = colorClasses[color]
+
+  return (
+    <div className={`glass-card ${c.border} overflow-hidden animate-slide-up animate-delay-100`}>
+      {/* Header gradient */}
+      <div className={`h-1 bg-gradient-to-r ${c.gradient}`} />
+
+      <div className="p-6">
+        {/* Avatar & Name */}
+        <div className="flex items-center gap-4 mb-6">
+          <div className={`${c.ring} w-14 h-14`}>
+            <div className="w-full h-full rounded-full bg-carbon-800 flex items-center justify-center text-xl font-bold">
+              {name[0]}
             </div>
-            <Link href="/tasks" className="block mt-4 text-blue-400 hover:underline text-sm">
-              Voir toutes les tasks →
+          </div>
+          <div className="flex-1">
+            <div className="flex items-center gap-2">
+              <h2 className="text-xl font-bold">{name}</h2>
+              <div className={`status-dot ${isOnline ? 'status-active' : 'status-offline'}`} />
+            </div>
+            <div className="text-sm text-white/50">{role}</div>
+          </div>
+          <div className="text-right">
+            <div className={`text-2xl font-bold ${c.text}`}>{data?.hoursThisWeek || 0}h</div>
+            <div className="text-xs text-white/40">this week</div>
+          </div>
+        </div>
+
+        {/* Today's Schedule */}
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold text-white/70 uppercase tracking-wider">Today</h3>
+            <Link href="/schedule" className="text-xs text-white/40 hover:text-white/60 transition-colors">
+              View all →
             </Link>
           </div>
-
-          {/* Jimmy's Work */}
-          <div className="bg-slate-800 rounded-lg p-6 border border-slate-700">
-            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              🤖 Jimmy (Actions Auto)
-            </h2>
-            <div className="space-y-3">
-              {crons.length === 0 ? (
-                <div className="text-slate-400 text-sm">Aucune action récente</div>
-              ) : (
-                crons.slice(0, 5).map(cron => (
-                  <JimmyAction 
-                    key={cron.id}
-                    time={new Date(cron.startedAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
-                    action={cron.cronName}
-                    status={cron.status}
-                  />
-                ))
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Projects */}
-        <div className="mt-6 bg-slate-800 rounded-lg p-6 border border-slate-700">
-          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-            📊 Projets
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {projects.length === 0 ? (
-              <div className="text-slate-400 text-sm">Aucun projet actif</div>
-            ) : (
-              projects.map(project => (
-                <ProjectCard 
-                  key={project.id}
-                  name={project.name}
-                  progress={project.progress}
-                  owner={project.owner}
-                  status={project.status}
-                />
+          <div className="space-y-2">
+            {data?.schedule && data.schedule.length > 0 ? (
+              data.schedule.slice(0, 4).map((entry) => (
+                <div key={entry.id} className="flex items-center gap-3 p-2 rounded-lg bg-white/[0.03] hover:bg-white/[0.05] transition-colors">
+                  <span className="font-mono text-xs text-white/40 w-12">{entry.startTime}</span>
+                  <span className="text-sm text-white/80 flex-1 truncate">{entry.title}</span>
+                </div>
               ))
+            ) : (
+              <div className="text-sm text-white/30 italic p-2">No events scheduled</div>
             )}
           </div>
         </div>
 
-        {/* Nastia's Planning */}
-        <div className="mt-6 bg-slate-800 rounded-lg p-6 border border-slate-700">
-          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-            👧 Planning Nastia (cette semaine)
-          </h2>
-          <div className="grid grid-cols-7 gap-2 text-center text-sm">
-            <DayCard day="Lun" activity="Instagram" highlight />
-            <DayCard day="Mar" activity="Instagram" highlight />
-            <DayCard day="Mer" activity="OnlyFans" warning />
-            <DayCard day="Jeu" activity="-" />
-            <DayCard day="Ven" activity="Debrief" />
-            <DayCard day="Sam" activity="-" />
-            <DayCard day="Dim" activity="-" />
+        {/* Active Projects */}
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold text-white/70 uppercase tracking-wider">Projects</h3>
+            <Link href="/projects" className="text-xs text-white/40 hover:text-white/60 transition-colors">
+              View all →
+            </Link>
+          </div>
+          <div className="space-y-3">
+            {data?.projects && data.projects.length > 0 ? (
+              data.projects.slice(0, 3).map((project) => (
+                <div key={project.id} className="group">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-sm text-white/80 group-hover:text-white transition-colors">{project.name}</span>
+                    <span className="text-xs text-white/40">{project.progress}%</span>
+                  </div>
+                  <div className="progress-bar">
+                    <div
+                      className={`progress-fill ${c.bg}`}
+                      style={{ width: `${project.progress}%` }}
+                    />
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-sm text-white/30 italic">No active projects</div>
+            )}
           </div>
         </div>
-      </main>
+
+        {/* Recent Tasks */}
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold text-white/70 uppercase tracking-wider">Tasks</h3>
+            <Link href="/tasks" className="text-xs text-white/40 hover:text-white/60 transition-colors">
+              View all →
+            </Link>
+          </div>
+          <div className="space-y-2">
+            {data?.tasks && data.tasks.length > 0 ? (
+              data.tasks.slice(0, 4).map((task) => (
+                <TaskItem key={task.id} task={task} />
+              ))
+            ) : (
+              <div className="text-sm text-white/30 italic p-2">No recent tasks</div>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
 
-function StatCard({ title, value, color }: { title: string; value: string; color: string }) {
-  const colorClasses: Record<string, string> = {
-    blue: 'bg-blue-500/10 border-blue-500/30 text-blue-400',
-    green: 'bg-green-500/10 border-green-500/30 text-green-400',
-    purple: 'bg-purple-500/10 border-purple-500/30 text-purple-400',
-    amber: 'bg-amber-500/10 border-amber-500/30 text-amber-400',
-  }
-  return (
-    <div className={`p-4 rounded-lg border ${colorClasses[color]}`}>
-      <div className="text-2xl font-bold">{value}</div>
-      <div className="text-sm opacity-80">{title}</div>
-    </div>
-  )
-}
-
-function PlanningItem({ time, title, actor }: { time: string; title: string; actor: string }) {
-  return (
-    <div className="flex items-center gap-3 p-2 rounded hover:bg-slate-700/50">
-      <span className="text-slate-400 font-mono text-sm w-14">{time}</span>
-      <span className="flex-1">{title}</span>
-      <span className="text-xs text-slate-500 uppercase">{actor}</span>
-    </div>
-  )
-}
-
-function TaskItem({ title, status, actor }: { title: string; status: string; actor?: string }) {
-  const statusIcons: Record<string, string> = {
-    pending: '○',
-    in_progress: '◐',
-    done: '●',
-    failed: '✕',
-  }
+function TaskItem({ task }: { task: { id: string; title: string; status: string; type: string } }) {
   const statusColors: Record<string, string> = {
-    pending: 'text-slate-400',
-    in_progress: 'text-yellow-400',
-    done: 'text-green-400',
-    failed: 'text-red-400',
+    pending: 'bg-white/20',
+    in_progress: 'bg-neon-orange',
+    done: 'bg-neon-green',
+    failed: 'bg-neon-pink'
   }
-  return (
-    <div className="flex items-center gap-3 p-2 rounded bg-slate-700/50">
-      <span className={statusColors[status] || 'text-slate-400'}>{statusIcons[status] || '○'}</span>
-      <span className="flex-1">{title}</span>
-      {actor && <span className="text-xs text-slate-500">{actor}</span>}
-    </div>
-  )
-}
 
-function JimmyAction({ time, action, status }: { time: string; action: string; status: string }) {
-  const statusColors: Record<string, string> = {
-    running: 'text-yellow-400',
-    success: 'text-green-400',
-    failed: 'text-red-400',
+  const typeIcons: Record<string, string> = {
+    email: '✉',
+    video: '🎬',
+    news: '📰',
+    custom: '✦'
   }
-  const statusIcons: Record<string, string> = {
-    running: '⟳',
-    success: '✓',
-    failed: '✕',
-  }
+
   return (
-    <div className="flex items-center gap-3 p-2 rounded bg-slate-700/50">
-      <span className="text-slate-400 font-mono text-sm w-14">{time}</span>
-      <span className="flex-1">{action}</span>
-      <span className={`text-xs ${statusColors[status]}`}>
-        {statusIcons[status]} {status}
+    <div className="flex items-center gap-3 p-2 rounded-lg bg-white/[0.03] hover:bg-white/[0.05] transition-colors group">
+      <div className={`w-2 h-2 rounded-full ${statusColors[task.status] || 'bg-white/20'}`} />
+      <span className="text-sm text-white/60 group-hover:text-white/80 transition-colors flex-1 truncate">
+        {task.title}
       </span>
+      <span className="text-xs opacity-50">{typeIcons[task.type] || '✦'}</span>
     </div>
   )
 }
 
-function ProjectCard({ name, progress, owner, status }: { name: string; progress: number; owner: string; status: string }) {
+function JimmyColumn({ crons }: { crons: Awaited<ReturnType<typeof getRecentCrons>> }) {
   return (
-    <div className={`bg-slate-700/50 rounded-lg p-4 ${status === 'paused' ? 'opacity-60' : ''}`}>
-      <div className="flex justify-between items-start mb-2">
-        <span className="font-medium">{name}</span>
-        <span className="text-xs text-slate-400 uppercase">{owner}</span>
+    <div className="glass-card neon-border-green overflow-hidden animate-slide-up animate-delay-200">
+      {/* Header gradient */}
+      <div className="h-1 bg-gradient-to-r from-neon-green/20 to-transparent" />
+
+      <div className="p-6">
+        {/* Avatar & Name */}
+        <div className="flex items-center gap-4 mb-6">
+          <div className="avatar-ring-green w-14 h-14">
+            <div className="w-full h-full rounded-full bg-carbon-800 flex items-center justify-center text-xl">
+              🤖
+            </div>
+          </div>
+          <div className="flex-1">
+            <div className="flex items-center gap-2">
+              <h2 className="text-xl font-bold">Jimmy</h2>
+              <div className="status-dot status-active" />
+            </div>
+            <div className="text-sm text-white/50">AI Assistant</div>
+          </div>
+          <div className="px-3 py-1 rounded-full bg-neon-green/10 border border-neon-green/30">
+            <span className="text-xs text-neon-green font-medium">ONLINE</span>
+          </div>
+        </div>
+
+        {/* Current Status */}
+        <div className="mb-6 p-4 rounded-xl bg-white/[0.03] border border-white/[0.05]">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-2 h-2 rounded-full bg-neon-green animate-pulse" />
+            <span className="text-xs text-white/50 uppercase tracking-wider">System Status</span>
+          </div>
+          <div className="text-sm text-white/70">
+            All systems operational. Monitoring tasks and automations.
+          </div>
+        </div>
+
+        {/* Activity Feed */}
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold text-white/70 uppercase tracking-wider">Activity</h3>
+            <Link href="/activity" className="text-xs text-white/40 hover:text-white/60 transition-colors">
+              View all →
+            </Link>
+          </div>
+          <div className="space-y-1 relative">
+            {crons.length > 0 ? (
+              crons.map((cron, index) => (
+                <CronItem key={cron.id} cron={cron} isLast={index === crons.length - 1} />
+              ))
+            ) : (
+              <div className="text-sm text-white/30 italic p-2">No recent activity</div>
+            )}
+          </div>
+        </div>
       </div>
-      <div className="w-full bg-slate-600 rounded-full h-2 mb-1">
-        <div 
-          className={`h-2 rounded-full transition-all ${
-            status === 'completed' ? 'bg-green-500' : 
-            status === 'paused' ? 'bg-slate-500' : 
-            'bg-blue-500'
-          }`}
-          style={{ width: `${progress}%` }}
-        />
-      </div>
-      <span className="text-xs text-slate-400">{progress}%</span>
     </div>
   )
 }
 
-function DayCard({ day, activity, highlight, warning }: { day: string; activity: string; highlight?: boolean; warning?: boolean }) {
-  let bgClass = 'bg-slate-700/50'
-  if (highlight) bgClass = 'bg-blue-500/20 border border-blue-500/30'
-  if (warning) bgClass = 'bg-amber-500/20 border border-amber-500/30'
-  
+function CronItem({ cron, isLast }: {
+  cron: { id: string; cronName: string; status: string; startedAt: Date }
+  isLast: boolean
+}) {
+  const statusColors: Record<string, string> = {
+    running: 'bg-neon-orange',
+    success: 'bg-neon-green',
+    failed: 'bg-neon-pink'
+  }
+
+  const statusIcons: Record<string, string> = {
+    running: '◐',
+    success: '✓',
+    failed: '✕'
+  }
+
+  const time = new Date(cron.startedAt).toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  })
+
   return (
-    <div className={`p-2 rounded ${bgClass}`}>
-      <div className="font-medium">{day}</div>
-      <div className="text-xs text-slate-400 mt-1">{activity}</div>
+    <div className="relative flex items-start gap-3 py-2 pl-1">
+      {!isLast && <div className="timeline-connector" />}
+      <div className={`w-6 h-6 rounded-full ${statusColors[cron.status] || 'bg-white/20'} flex items-center justify-center text-xs text-carbon-950 font-bold shrink-0`}>
+        {statusIcons[cron.status] || '?'}
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="text-sm text-white/70 truncate">{cron.cronName}</div>
+        <div className="text-xs text-white/30 font-mono">{time}</div>
+      </div>
     </div>
   )
 }

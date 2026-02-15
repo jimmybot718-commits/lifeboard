@@ -17,8 +17,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "LifeBoard - Personal Dashboard",
-  description: "Personal dashboard for planning, tasks, and productivity tracking",
+  title: "LifeBoard - Command Center",
+  description: "Personal command center for planning, tasks, and productivity tracking",
   applicationName: "LifeBoard",
   appleWebApp: {
     capable: true,
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0f172a",
+  themeColor: "#0a0a0c",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -45,12 +45,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <head>
         <link rel="apple-touch-icon" href="/icon-192.png" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-carbon-950`}
       >
         {children}
         <ServiceWorkerRegistration />
